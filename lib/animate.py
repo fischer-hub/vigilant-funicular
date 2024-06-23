@@ -81,38 +81,12 @@ class StripAnimate(pg.sprite.Sprite):
                 self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
 
-class Player(StripAnimate):
-    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (5, 5), step_size = 5):
-        super().__init__(sprite_path, img_width, scale_factor, frame_rate)
-        self.moving = False
-        self.destination_pos = pos
-        self.step_size = step_size
-    
-    def update_pos(self, pos):
-        print('new pos ios:', pos)
-        if (self.rect[0:1]) != pos:
-            # the position of the mouse click is where the feet of the character should end up on the screen, approximately, shift and scale the sprite accordingly
-            self.destination_pos = (pos[0] - ((self.img_height / 2) * self.scale_factor), pos[1] - ((self.img_width / 1.5 ) * self.scale_factor))
-            print('pos was updated')
-            self.moving = True
+    def draw(self, surface, flip):
 
-    
-    def update(self):
-
-        """Updates the sprite to the next frame based on the frame rate and changes the rect position until it matches the destination position."""
+        """Draw current image of sprite sheet, flipped if flip is true. Flip is true if the player moves in the opposite direction that the animation is implying."""
         
-        # check if time span for set frame rate has passed since last update call
-        if pg.time.get_ticks() - self.frame_timestamp > 1000 / self.frame_rate:
+        if flip:
+            surface.blit(pg.transform.flip(self.image, True, False), self.rect)
+        else:
+            surface.blit(self.image, self.rect)
 
-            self.frame_timestamp = pg.time.get_ticks()
-            self.index += 1
-            self.sprite_offset = self.index * self.img_width
-
-            if self.sprite_offset >= self.sprite_width:
-                self.index = 0
-                self.sprite_offset = 0
-            else:
-                self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
-
-        self.rect[0] += sign(self.destination_pos[0] - self.rect[0]) * self.step_size
-        self.rect[1] += sign(self.destination_pos[1] - self.rect[1]) * self.step_size
