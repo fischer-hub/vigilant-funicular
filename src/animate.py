@@ -20,11 +20,14 @@ class StripAnimate(pg.sprite.Sprite):
         rect (pg.Rect): The rectangle defining the position and dimensions of the sprite.
         frame_timestamp (int): The timestamp of the last frame update.
         frame_rate (int): The frame rate of the animation (frames per second).
+        x (int): The int value of the X-coordinate of the left side of the rectangle.
+        y (int): The int value of the Y-coordinate of the left side of the rectangle.
+
 
     Methods:
         update(): Updates the sprite to the next frame based on the frame rate.
     """
-    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1):
+    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (5, 5)):
         super(StripAnimate, self).__init__()
         
         # load sprite sheet image file
@@ -44,14 +47,13 @@ class StripAnimate(pg.sprite.Sprite):
         self.img_height = self.sprite_sheet.get_height()
 
         # if image height is not set, assume the sprite is a square and sprite sheet height equals image width
-        if img_width == 0: self.img_width = self.img_height
         self.img_width = self.img_height if not img_width else img_width
 
         # initialize animation with first frame of sprite strip and scale to right resolution
         self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.sprite_offset, 0, self.img_width, self.img_height]), self.scale_factor)
 
         # set rect (what does this do??)
-        self.rect = pg.Rect(5, 5, 64, 64)
+        self.rect = pg.Rect(pos[0], pos[1], self.img_width, self.img_height)
 
         # initialize time of first frame displayed
         self.frame_timestamp = pg.time.get_ticks()
@@ -69,11 +71,21 @@ class StripAnimate(pg.sprite.Sprite):
 
             self.frame_timestamp = pg.time.get_ticks()
             self.index += 1
-            self.sprite_offset = self.index * self.image_width
+            self.sprite_offset = self.index * self.img_width
 
             if self.sprite_offset >= self.sprite_width:
                 self.index = 0
                 self.sprite_offset = 0
             else:
-                self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.image_width, 0, self.image_width, self.image_height]), self.scale_factor)
+                self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
+class Player(StripAnimate):
+    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, x = 5, y = 5):
+        super(StripAnimate, self).__init__()
+
+        self.moving = False
+    
+    def update(self, pos):
+        if (self.rect[0], self.rect[1]) != pos:
+            self.rect = (pos, self.img_width, self.img_height)
+        

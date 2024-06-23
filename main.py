@@ -10,25 +10,32 @@ def main():
 
     # pg setup
     pg.init()
-    screen = pg.display.set_mode((1920, 1080))
+    screen = pg.display.set_mode((320 * 5, 180 *5))
     clock = pg.time.Clock()
     running = True
     dt = 0
 
     player_pos = pg.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-
-    doctor = am.StripAnimate('sprites/dr_idle.png')
-    #my_group = pg.sprite.Group(my_sprite)
+    # initial position for sprite top left corner
+    pos = (500, 500)
+    doctor_idle = am.Player('sprites/dr_idle.png', pos)
+    doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5)
+    my_group = pg.sprite.Group(doctor_idle, doctor_walk)
 
     while running:
         # poll for events
         # pg.QUIT event means the user clicked X to close your window
         for event in pg.event.get():
+
+            # handle MOUSEBUTTONUP
+            if event.type == pg.MOUSEBUTTONUP:
+                 pos = pg.mouse.get_pos()
+                 print(pos)
             if event.type == pg.QUIT:
                 running = False
 
-        # fill the screen with a color to wipe away anything from last frame
-        screen.fill("purple")
+        # display background
+        screen.blit(pg.transform.scale_by(pg.image.load('sprites/bg1.png').convert_alpha(), 5), (0,0))
 
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
@@ -44,9 +51,12 @@ def main():
         # Calling the 'my_group.update' function calls the 'update' function of all 
         # its member sprites. Calling the 'my_group.draw' function uses the 'image'
         # and 'rect' attributes of its member sprites to draw the sprite.
-        #my_group.update()
-        doctor.update()
-        doctor.draw(screen)
+        my_group.update(pos)
+        my_group.draw(screen)
+
+        # load and display foreground
+        screen.blit(pg.transform.scale_by(pg.image.load('sprites/fg1.png').convert_alpha(), 5), (0,0))
+
 
         # flip() the display to put your work on screen
         pg.display.flip()
