@@ -1,22 +1,37 @@
 from lib.helper import sign
-from lib.animate import StripAnimate
+from src.animate import StripAnimate
 import pygame as pg
 
 class Player():
-    def __init__(self, anim_lst, step_size = 5, pos = (5, 5)):
+    def __init__(self, anim_lst, collision_lst, step_size = 5, pos = (5, 5), dev = False):
+
+        self.dev = dev
+        self.collision_lst = collision_lst
         self.animation_lst = anim_lst
         self.moving = False
         self.destination_pos = pos
         self.step_size = step_size
         self.current_animation = anim_lst[0] if not self.moving else anim_lst[1]
+        self.current_animation.rect[0] = pos[0]
+        self.current_animation.rect[1] = pos[1]
         self.rect = self.current_animation.rect
         self.flip = False
     
-    def update_pos(self, pos):
+    def move_to(self, pos):
         if (self.current_animation.rect[0:1]) != pos:
+
             # the position of the mouse click is where the feet of the character should end up on the screen, approximately, shift and scale the sprite accordingly
-            self.destination_pos = (pos[0] - ((self.current_animation.img_height / 2) * self.current_animation.scale_factor), pos[1] - ((self.current_animation.img_width / 1.5 ) * self.current_animation.scale_factor))
+            x_offset = (self.current_animation.img_height / 2 ) * self.current_animation.scale_factor
+            y_offset = (self.current_animation.img_width / 1.5 ) * self.current_animation.scale_factor
+
+            self.destination_pos = (int(pos[0] - x_offset), pos[1] - y_offset)
             
+            # if we reach the collision bound, set y to y value at collision border
+            if not self.dev and self.destination_pos[1] <= self.collision_lst[self.destination_pos[0]]:
+
+                self.destination_pos = (self.destination_pos[0], self.collision_lst[self.destination_pos[0]] - y_offset)
+                print('collision!, changed: ', (int(pos[0] - ((self.current_animation.img_height / 2) * self.current_animation.scale_factor)), pos[1] - ((self.current_animation.img_width / 1.5 ) * self.current_animation.scale_factor)), self.destination_pos)
+
             # set moving bool to true and change animation to walking animation (2), change position of sprite to curretn pos of player
             self.moving = True
             self.rect = self.current_animation.rect
@@ -50,9 +65,6 @@ class Player():
             self.flip = True
         else:
             self.flip = False
-        print('curr pos: ', (self.current_animation.rect[0], self.current_animation.rect[1]))
-        print('destination: ', self.destination_pos)
-
     
 
     def draw(self, surface):

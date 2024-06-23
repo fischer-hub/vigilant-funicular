@@ -28,7 +28,7 @@ class StripAnimate(pg.sprite.Sprite):
     Methods:
         update(): Updates the sprite to the next frame based on the frame rate.
     """
-    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (5, 5)):
+    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (0, 0)):
         super(StripAnimate, self).__init__()
         
         # load sprite sheet image file
@@ -81,7 +81,7 @@ class StripAnimate(pg.sprite.Sprite):
                 self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
 
-    def draw(self, surface, flip):
+    def draw(self, surface, flip = False):
 
         """Draw current image of sprite sheet, flipped if flip is true. Flip is true if the player moves in the opposite direction that the animation is implying."""
         
