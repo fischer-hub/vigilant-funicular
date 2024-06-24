@@ -7,6 +7,8 @@ class Scene():
         self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in background_lst]
         self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in foreground_lst]
 
+        self.show_collision = False
+
         if not dev:
             with open((collision_file), "rb") as fn: 
                 self.collision_lst = pickle.load(fn)
@@ -24,6 +26,11 @@ class Scene():
                     
 
     def draw_fg(self, surface):
+        
+        if self.show_collision:
+            for i in range(len(self.collision_lst)):
+                surface.set_at((i, self.collision_lst[i]), "red")
+
         for layer in self.fg_lst:
             if type(layer) is StripAnimate:
                 layer.update()
