@@ -28,7 +28,7 @@ class StripAnimate(pg.sprite.Sprite):
     Methods:
         update(): Updates the sprite to the next frame based on the frame rate.
     """
-    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (0, 0)):
+    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (0, 0), cycles = 0):
         super(StripAnimate, self).__init__()
         
         # load sprite sheet image file
@@ -62,6 +62,12 @@ class StripAnimate(pg.sprite.Sprite):
         # set frame rate of animations in FPS (i hope)
         self.frame_rate = frame_rate
 
+        # number of animation cycles that should be played
+        self.cycles = cycles
+
+        # current number of animation cycles already played
+        self.cycle_count = 0
+
 
     def update(self):
 
@@ -74,11 +80,19 @@ class StripAnimate(pg.sprite.Sprite):
             self.index += 1
             self.sprite_offset = self.index * self.img_width
 
+            # end of sprite reached, wrap around to first frame
             if self.sprite_offset >= self.sprite_width:
+                
+                self.cycle_count += 1
+                        
+                # if cycle not 0 and cycle limit reached, return from update (end on last frame of spritesheet)
+                if self.cycles and (self.cycles <= self.cycle_count):
+                    return
+                
                 self.index = 0
                 self.sprite_offset = 0
-            else:
-                self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
+
+            self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
 
     def draw(self, surface, flip = False):

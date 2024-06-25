@@ -20,11 +20,11 @@ class SceneHandler():
             self.scene_idx = scene_idx
 
         # we stopped moving to destination, ready for next scnene
-        if not self.player.moving:
+        if  self.player.moving:
             self.scene = self.scene_lst[scene_idx]
         # we are still walking, send userevent to check in a few seconds again
         else:
-            pg.time.set_timer(pg.USEREVENT + 150)
+            pg.time.set_timer(pg.USEREVENT + 1, 50)
 
 
     def handle_event(self, event):
@@ -121,3 +121,4 @@ class ChangeScene(Clickable):
     def on_click(self):
         print('change scene triggered')
         return self.next_scene_idx
+    

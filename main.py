@@ -42,10 +42,10 @@ def main():
 
     # init scene objects
     scene1 = Scene1(doctor, ['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
-    elevator_scene = ElevatorScene(doctor, ['scenes/elevator/elevator_doors.png', 'scenes/elevator/elevator_bg.png'], [], scale_factor = scale_factor, dev = dev)
+    elevator_scene = ElevatorScene(doctor, ['scenes/elevator/elevator_bg.png'], [], scale_factor = scale_factor, dev = dev)
 
     # init scene handler
-    scene_handler = sc.SceneHandler([scene1, elevator_scene], doctor)
+    scene_handler = sc.SceneHandler([elevator_scene], doctor)
 
     # whatever that is
     if dev: scene1.draw_bg(screen)
@@ -87,6 +87,9 @@ def main():
                 running = False
             
             scene_handler.handle_event(event)
+
+        # draw rect on screen
+        #pg.draw.rect(screen, (255,255,255), (1180, 420, 50, 55))
 
         #screen.blit(clickable_surf, change_scene_clickable)
         # flip() the display to put your work on screen
