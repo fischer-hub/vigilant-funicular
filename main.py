@@ -3,8 +3,11 @@ import pygame as pg
 import src.animate as am
 from src.player import Player
 from src.scene import Scene
+from scenes.scene1 import Scene1
+from scenes.elevator.elevator import ElevatorScene
 from lib.helper import record_collision_points
 from lib.helper import set_dev
+import src.scene as sc
 import sys
 
 
@@ -29,13 +32,24 @@ def main():
     p1 = []
     p2 = []
 
-    # initial position for sprite top left corner
+    # init StripAnimate objects (maybe move this to the respective scene class for cleaner code)
     pipe = am.StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
-    scene1 = Scene(['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     doctor_idle = am.StripAnimate('sprites/dr_idle.png', scale_factor = scale_factor)
     doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5, scale_factor = scale_factor)
-    doctor = Player([doctor_idle, doctor_walk], scene1.collision_lst, step_size = 2, dev = dev, pos = (1000, 700))
+
+    # init character (Player) objects
+    doctor = Player([doctor_idle, doctor_walk], step_size = 2, dev = dev, pos = (1000, 700))
+
+    # init scene objects
+    scene1 = Scene1(doctor, ['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
+    elevator_scene = ElevatorScene(doctor, ['scenes/elevator/elevator_doors.png', 'scenes/elevator/elevator_bg.png'], [], scale_factor = scale_factor, dev = dev)
+
+    # init scene handler
+    scene_handler = sc.SceneHandler([scene1, elevator_scene], doctor)
+
+    # whatever that is
     if dev: scene1.draw_bg(screen)
+
 
     while running:
 
@@ -43,13 +57,13 @@ def main():
         if not dev:
 
             # display background
-            scene1.draw_bg(screen)
+            scene_handler.draw_bg(screen)
         
             # call draw function on doctor ass sprites
             doctor.draw(screen)
 
             # load and display foreground
-            scene1.draw_fg(screen)
+            scene_handler.draw_fg(screen)
 
         # poll for events
         for event in pg.event.get():
@@ -58,6 +72,7 @@ def main():
             if event.type == pg.MOUSEBUTTONUP:
                  mpos = pg.mouse.get_pos()
                  doctor.move_to(mpos)
+                 print(mpos)
 
                  # maybe put this in an extra fct at some point
                  if dev:
@@ -70,7 +85,10 @@ def main():
 
             if event.type == pg.QUIT:
                 running = False
+            
+            scene_handler.handle_event(event)
 
+        #screen.blit(clickable_surf, change_scene_clickable)
         # flip() the display to put your work on screen
         pg.display.flip()
 

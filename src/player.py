@@ -3,7 +3,7 @@ from src.animate import StripAnimate
 import pygame as pg
 
 class Player():
-    def __init__(self, anim_lst, collision_lst, step_size = 5, pos = (5, 5), dev = False):
+    def __init__(self, anim_lst, collision_lst = [], step_size = 5, pos = (5, 5), dev = False):
 
         self.dev = dev
         self.collision_lst = collision_lst

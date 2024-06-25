@@ -1,5 +1,5 @@
 import pygame as pg
-from lib.helper import sign
+
 
 class StripAnimate(pg.sprite.Sprite):
     """
