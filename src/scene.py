@@ -47,7 +47,7 @@ class SceneHandler():
 
 
 class Scene():
-    def __init__(self, player, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
+    def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
 
         self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in background_lst]
         self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in foreground_lst]
@@ -73,6 +73,7 @@ class Scene():
             self.collision_lst = [0] * 8000
 
         self.player.collision_lst = self.collision_lst
+        self.cursor = cursor
             
 
     def draw_bg(self, surface):
@@ -103,7 +104,10 @@ class Scene():
         
         for obj in self.clickable_lst:
             if obj.rect.collidepoint(pg.mouse.get_pos()):
-                pass
+                self.cursor.change_cursor(obj.hover_cursor)
+            else:
+                self.cursor.change_cursor(0)
+
             
             if event.type == pg.MOUSEBUTTONUP and obj.rect.collidepoint(event.pos):
                 return obj.on_click()
@@ -120,17 +124,18 @@ class Scene():
 
 
 class Clickable():
-    def __init__(self, rect, animation = None):
+    def __init__(self, rect, animation = None, hover_cursor = 0):
         self.rect = rect
         self.animation = animation
+        self.hover_cursor = hover_cursor
 
     def on_click(self):
         print(f"Clickable does not implement own on_click() method. Clicked on object at {self.rect.topleft}")
 
 
 class ChangeScene(Clickable):
-    def __init__(self, rect, next_scene_idx, animation=None):
-        super().__init__(rect, animation)
+    def __init__(self, rect, next_scene_idx, animation=None, hover_cursor = 0):
+        super().__init__(rect, animation, hover_cursor)
         self.next_scene_idx = next_scene_idx
 
     def on_click(self):

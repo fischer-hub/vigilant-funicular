@@ -35,7 +35,7 @@ class StripAnimate(pg.sprite.Sprite):
         self.sprite_sheet = pg.image.load(sprite_path).convert_alpha()
 
         # index to keep track of which frame of the animation is currently displayed
-        self.index = 0
+        self.index = default_frame
 
         # pixel offset from sprite start to current frame
         self.sprite_offset = 0
@@ -49,9 +49,9 @@ class StripAnimate(pg.sprite.Sprite):
 
         # if image height is not set, assume the sprite is a square and sprite sheet height equals image width
         self.img_width = self.img_height if not img_width else img_width
-
+        
         # initialize animation with first frame of sprite strip and scale to right resolution
-        self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([0, 0, self.img_width, self.img_height]), self.scale_factor)
+        self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
         # set rect (what does this do??)
         self.rect = pg.Rect(pos[0], pos[1], self.img_width, self.img_height)
@@ -68,8 +68,6 @@ class StripAnimate(pg.sprite.Sprite):
         # current number of animation cycles already played
         self.cycle_count = 1
 
-        # frame to show when no animation is played
-        self.default_frame = default_frame
 
         self.pause = pause
 
@@ -81,7 +79,9 @@ class StripAnimate(pg.sprite.Sprite):
         # check if time span for set frame rate has passed since last update call
         if pg.time.get_ticks() - self.frame_timestamp > 1000 / self.frame_rate:
 
+            # update current img with current index and exit (in case the default img was changed but no animation is played)
             if self.pause:
+                self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
                 return
 
             self.frame_timestamp = pg.time.get_ticks()

@@ -11,6 +11,21 @@ import src.scene as sc
 import sys
 
 
+class Cursor:
+    def __init__(self, animation_obj):
+        self.cursor_img = animation_obj
+
+    # set cursor img position to mouse position and draw cursor img to screen
+    def draw(self, surface):
+        self.cursor_img.rect.center = pg.mouse.get_pos()
+        self.cursor_img.draw(surface)
+
+    # change the cursor img to index on cursor img sprite
+    def change_cursor(self, cursor_sprite_index):
+        self.cursor_img.index = cursor_sprite_index
+        self.cursor_img.update()
+        
+
 
 def main():
     
@@ -32,6 +47,10 @@ def main():
     p1 = []
     p2 = []
 
+    # set mouse invisable and init cursor
+    pg.mouse.set_visible(False)
+    cursor = Cursor(am.StripAnimate('sprites/cursor.png', 16, scale_factor/2, pause = True))
+
     # init StripAnimate objects (maybe move this to the respective scene class for cleaner code)
     pipe = am.StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
     elevator_door = am.StripAnimate('scenes/elevator/elevator_doors.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
@@ -42,11 +61,12 @@ def main():
     doctor = Player([doctor_idle, doctor_walk], step_size = 2, dev = dev, pos = (1000, 700))
 
     # init scene objects
-    scene1 = Scene1(doctor, ['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
-    elevator_scene = ElevatorScene(doctor, ['scenes/elevator/elevator_inside.png', elevator_door, 'scenes/elevator/elevator_bg.png'], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
+    scene1 = Scene1(doctor, cursor, ['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
+    elevator_scene = ElevatorScene(doctor, cursor, ['scenes/elevator/elevator_inside.png', elevator_door, 'scenes/elevator/elevator_bg.png'], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
 
     # init scene handler
     scene_handler = sc.SceneHandler([scene1, elevator_scene], doctor)
+
 
     # whatever that is
     if dev: elevator_scene.draw_bg(screen)
@@ -54,7 +74,7 @@ def main():
 
     while running:
 
-
+        
         if not dev:
 
             # display background
@@ -90,7 +110,9 @@ def main():
             scene_handler.handle_event(event)
 
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (1180, 420, 50, 55))
+        pg.draw.rect(screen, (255,255,255), (1200, 620, 130, 52))
+
+        cursor.draw(screen)
 
         #screen.blit(clickable_surf, change_scene_clickable)
         # flip() the display to put your work on screen
@@ -100,6 +122,7 @@ def main():
         # dt is delta time in seconds since last frame, used for framerate-
         # independent physics.
         dt = clock.tick(60) / 1000
+
 
     pg.quit()
 
