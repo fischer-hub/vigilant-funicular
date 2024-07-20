@@ -1,4 +1,3 @@
-# Example file showing a circle moving on screen
 import pygame as pg
 import src.animate as am
 from src.player import Player
@@ -22,11 +21,8 @@ class Cursor:
 
     # change the cursor img to index on cursor img sprite
     def change_cursor(self, cursor_sprite_index):
-        print('change cursor triggereg to ', cursor_sprite_index)
         self.cursor_img.index = cursor_sprite_index
         self.cursor_img.update()
-        print('current cursor image index: ',self.cursor_img.index)
-        
 
 
 def main():
@@ -59,9 +55,11 @@ def main():
     elevator_door = am.StripAnimate('scenes/elevator/elevator_doors.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
     doctor_idle = am.StripAnimate('sprites/dr_idle.png', scale_factor = scale_factor)
     doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5, scale_factor = scale_factor)
+    doctor_talk = am.StripAnimate('sprites/characters/dr_talk.png', frame_rate = 5, scale_factor = scale_factor)
 
     # init character (Player) objects
-    doctor = Player([doctor_idle, doctor_walk], step_size = 2, dev = dev, pos = (1000, 700))
+    doctor = Player([doctor_idle, doctor_walk, doctor_talk], step_size = 2, dev = dev, pos = (1000, 700))
+ 
 
     # init scene objects
     scene1 = Scene1(doctor, cursor, ['sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
@@ -92,16 +90,10 @@ def main():
         # poll for events
         for event in pg.event.get():
 
-            # handle MOUSEBUTTONUP
-            if event.type == pg.MOUSEBUTTONUP:
-                 mpos = pg.mouse.get_pos()
-                 doctor.move_to(mpos)
-                 print(mpos)
+            # we have to handle events moving the player to catch cases where a clickable was clicked but we dont want to walk to mous position
+            scene_handler.handle_event(event)
 
-                 # maybe put this in an extra fct at some point
-                 if dev:
-                    p1.append(mpos[0])
-                    p2.append(mpos[1])
+ 
                  
             if dev and event.type == pg.KEYDOWN:
                 if event.key == pg.K_q:
@@ -110,7 +102,6 @@ def main():
             if event.type == pg.QUIT:
                 running = False
             
-            scene_handler.handle_event(event)
 
         # draw rect on screen
         pg.draw.rect(screen, (255,255,255), (1200, 620, 130, 52))

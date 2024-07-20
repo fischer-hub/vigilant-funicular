@@ -9,6 +9,7 @@ class Player():
         self.collision_lst = collision_lst
         self.animation_lst = anim_lst
         self.moving = False
+        self.talking = False
         self.destination_pos = pos
         self.step_size = step_size
         self.current_animation = anim_lst[0] if not self.moving else anim_lst[1]
@@ -61,7 +62,8 @@ class Player():
         """Updates the sprite to the next frame based on the frame rate and changes the rect position until it matches the destination position."""
 
         # check if we arrived at destination position
-        if self.current_animation.rect[0] == self.destination_pos[0] and self.current_animation.rect[1] == self.destination_pos[1]:
+        if self.current_animation.rect[0] == self.destination_pos[0] and self.current_animation.rect[1] == self.destination_pos[1] and not self.talking and self.moving:
+            print('arrived at desti')
             self.moving = False
             self.current_animation = self.animation_lst[0]
         else:
@@ -95,3 +97,15 @@ class Player():
         """Calls the draw function for the current animation."""
         self.update()
         self.current_animation.draw(surface, self.flip)
+
+    def talk(self, audiofile):
+        sound = pg.mixer.Sound(audiofile)
+        self.talking = True
+        self.moving = False
+        self.rect = self.current_animation.rect
+        self.current_animation = self.animation_lst[2]
+        self.current_animation.rect = self.rect
+        self.destination_pos = (self.rect[0], self.rect[1])
+        pg.mixer.Sound.play(sound)
+        print('talk triggered')
+        pg.time.set_timer(pg.USEREVENT + 3, int(sound.get_length() * 1000), 1)

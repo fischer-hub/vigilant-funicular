@@ -24,8 +24,9 @@ class SceneHandler():
         if not self.player.moving:
             print('Changing to scene: ', self.scene_idx)
             self.scene = self.scene_lst[scene_idx]
-            self.player.rect[0] = self.player.destination_pos[0] = self.scene.player_spawn[0]
-            self.player.rect[1] = self.player.destination_pos[1] = self.scene.player_spawn[1]
+            self.player.rect[0] = self.scene.player_spawn[0]
+            self.player.rect[1] = self.scene.player_spawn[1]
+            self.player.destination_pos = self.scene.player_spawn
             self.player.collision_lst = self.scene.collision_lst
 
         # we are still walking, send userevent to check in a few seconds again
@@ -35,6 +36,20 @@ class SceneHandler():
 
     def handle_event(self, event):
         event_response = self.scene.handle_event(event)
+
+                   # handle MOUSEBUTTONUP
+        if event.type == pg.MOUSEBUTTONUP:
+                mpos = pg.mouse.get_pos()
+                
+                if not self.player.talking:
+                
+                    self.player.move_to(mpos)
+                    print(mpos)
+
+                # maybe put this in an extra fct at some point
+                #if dev:
+                 #   p1.append(mpos[0])
+                   # p2.append(mpos[1])
 
         if event_response is not None:
             self.change_scene(event_response)
@@ -123,13 +138,22 @@ class Scene():
             # trigger scene change in scene handler onto last scene index
             self.clickable_lst[self.last_clickable_idx].on_click()
         
+        elif event.type == pg.USEREVENT + 3:
+            # trigger end of talking animation
+            self.player.rect = self.player.current_animation.rect
+            self.player.current_animation = self.player.animation_lst[0]
+            self.player.current_animation.rect = self.player.rect
+            self.player.talking = False
+            print('talking ends')
+        
 
 
 class Clickable():
-    def __init__(self, rect, animation = None, hover_cursor = 0):
+    def __init__(self, rect, animation = None, hover_cursor = 0, sound = None):
         self.rect = rect
         self.animation = animation
         self.hover_cursor = hover_cursor
+        self.sound = sound
 
     def on_click(self):
         print(f"Clickable does not implement own on_click() method. Clicked on object at {self.rect.topleft}")

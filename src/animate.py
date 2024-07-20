@@ -53,7 +53,7 @@ class StripAnimate(pg.sprite.Sprite):
         # initialize animation with first frame of sprite strip and scale to right resolution
         self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
-        # set rect (what does this do??)
+        # set rect (position of sprite top left corner and size of sprite rectangle)
         self.rect = pg.Rect(pos[0], pos[1], self.img_width, self.img_height)
 
         # initialize time of first frame displayed
