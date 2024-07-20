@@ -100,18 +100,20 @@ class Scene():
 
     def handle_event(self, event):
 
-        """Handle event specific to scnene, return index of scnene to change to in scene_lst if change event is triggered."""
+        """Handle event specific to scene, return index of scnene to change to in scene_lst if change event is triggered."""
+        
+        # set cursor to default img, when no clickable is hovered, we just leave it, this ensures the cursor defaults when we stop hovering
+        self.cursor.change_cursor(0)        
         
         for obj in self.clickable_lst:
             if obj.rect.collidepoint(pg.mouse.get_pos()):
                 self.cursor.change_cursor(obj.hover_cursor)
-            else:
-                self.cursor.change_cursor(0)
 
             
             if event.type == pg.MOUSEBUTTONUP and obj.rect.collidepoint(event.pos):
                 return obj.on_click()
-                
+        
+
         # come back from waiting on moving player to scene change
         if event.type == pg.USEREVENT + 1:
             # trigger scene change in scene handler onto last scene index

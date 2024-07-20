@@ -8,7 +8,7 @@ from scenes.elevator.elevator import ElevatorScene
 from lib.helper import record_collision_points
 from lib.helper import set_dev
 import src.scene as sc
-import sys
+import sys, os
 
 
 class Cursor:
@@ -22,12 +22,15 @@ class Cursor:
 
     # change the cursor img to index on cursor img sprite
     def change_cursor(self, cursor_sprite_index):
+        print('change cursor triggereg to ', cursor_sprite_index)
         self.cursor_img.index = cursor_sprite_index
         self.cursor_img.update()
+        print('current cursor image index: ',self.cursor_img.index)
         
 
 
 def main():
+
     
     if len(sys.argv) > 1:
         set_dev(True)
@@ -39,7 +42,7 @@ def main():
     # pg setup
     pg.init()
     scale_factor = 6
-    screen = pg.display.set_mode((320 * scale_factor, 180 *scale_factor))
+    screen = pg.display.set_mode((320 * scale_factor, 180 *scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
     dt = 0
