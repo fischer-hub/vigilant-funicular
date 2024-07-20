@@ -1,6 +1,7 @@
 from lib.helper import sign
 from src.animate import StripAnimate
 import pygame as pg
+import os
 
 class Player():
     def __init__(self, anim_lst, collision_lst = [], step_size = 5, pos = (5, 5), dev = False):
@@ -17,6 +18,9 @@ class Player():
         self.current_animation.rect[1] = pos[1]
         self.rect = self.current_animation.rect
         self.flip = False
+        self.steps_sound = pg.mixer.Sound(os.path.join('sounds', 'characters', 'dr', 'steps.ogg'))
+        self.function_to_exec = None
+
     
 
     def correct_y_pos_on_collision(self, pos):
@@ -38,9 +42,11 @@ class Player():
             return pos
 
 
-    def move_to(self, pos):
+    def move_to(self, pos, function = None):
 
         if (self.current_animation.rect[0:1]) != pos:
+
+            self.steps_sound.play(loops = -1)
 
             # the position of the mouse click is where the feet of the character should end up on the screen, approximately, shift and scale the sprite accordingly
             x_offset = (self.current_animation.img_height / 2 ) * self.current_animation.scale_factor
@@ -55,6 +61,8 @@ class Player():
             self.rect = self.current_animation.rect
             self.current_animation = self.animation_lst[1]
             self.current_animation.rect = self.rect
+        
+        if function: self.function_to_exec = function
 
 
     def update(self):
@@ -63,9 +71,13 @@ class Player():
 
         # check if we arrived at destination position
         if self.current_animation.rect[0] == self.destination_pos[0] and self.current_animation.rect[1] == self.destination_pos[1] and not self.talking and self.moving:
-            print('arrived at desti')
             self.moving = False
             self.current_animation = self.animation_lst[0]
+            self.steps_sound.stop()
+            if self.function_to_exec: 
+                self.function_to_exec()
+                self.function_to_exec = None
+
         else:
 
 
@@ -109,3 +121,10 @@ class Player():
         pg.mixer.Sound.play(sound)
         print('talk triggered')
         pg.time.set_timer(pg.USEREVENT + 3, int(sound.get_length() * 1000), 1)
+
+    def crouch(self):
+        self.rect = self.current_animation.rect
+        self.current_animation = self.animation_lst[3]
+        self.current_animation.rect = self.rect
+        self.destination_pos = (self.rect[0], self.rect[1])
+
