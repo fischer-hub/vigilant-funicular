@@ -118,6 +118,7 @@ class Player():
         self.current_animation = self.animation_lst[2]
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])
+        self.steps_sound.stop()
         pg.mixer.Sound.play(sound)
         print('talk triggered')
         pg.time.set_timer(pg.USEREVENT + 3, int(sound.get_length() * 1000), 1)

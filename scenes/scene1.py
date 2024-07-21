@@ -2,6 +2,24 @@ from src.scene import Scene, Clickable, ChangeScene
 import pygame as pg
 import os
 
+
+class Commentable(Clickable):
+    def __init__(self, rect, player, animation=None, hover_cursor = 2, sound=None):
+        super().__init__(rect, animation, hover_cursor, sound)
+        self.player = player
+    
+    def on_click(self):
+        self.player.talk(self.sound)
+        return None
+
+class MidWindow(Clickable):
+    def __init__(self, rect, animation=None, hover_cursor = 1, sound=None):
+        super().__init__(rect, animation, hover_cursor, sound)
+    
+    def on_click(self):
+        self.animation.pause = False
+        return 42
+    
 class GreySlot(Clickable):
     def __init__(self, rect, player, sound, animation=None, hover_cursor = 2):
         super().__init__(rect, animation, hover_cursor, sound)
@@ -10,6 +28,7 @@ class GreySlot(Clickable):
     def on_click(self):
 
         self.player.talk(self.sound)
+        print('grey slot click')
 
 
 class GreenSlot(Clickable):
@@ -28,16 +47,27 @@ class GreenSlot(Clickable):
 
     def on_click(self):
         if not self.red:
-            self.player.talk(self.sound)
+            self.player.talk(self.sound[0])
             self.player.move_to(pg.mouse.get_pos(), self.turn_red)
         else:
-            print('das sieht nicht richtig aus')
+            self.player.talk(self.sound[1])
+            
 
 class Scene1(Scene):
     def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
         super().__init__(player, cursor, background_lst, foreground_lst, collision_file, scale_factor, dev)
         
         redslot = GreySlot(pg.Rect((1500, 625, 130, 52)), self.player, os.path.join('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'))
-        greenslot = GreenSlot(pg.Rect((908, 615, 110, 42)), self.player, os.path.join('sounds', 'characters', 'dr', 'das_koennte_spaeter.ogg'), self)
+        greenslot = GreenSlot(pg.Rect((908, 615, 110, 42)), self.player, [os.path.join('sounds', 'characters', 'dr', 'das_koennte_spaeter.ogg'), os.path.join('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg')], self)
         greyslot = GreySlot(pg.Rect((1200, 620, 130, 52)), self.player, os.path.join('sounds', 'characters', 'dr', 'sieht_aus_als.ogg'))
-        self.clickable_lst = [ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), greyslot, greenslot, redslot]
+        greenbutton1 = Commentable(pg.Rect((1709, 455, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_gruener_knopf.ogg'))
+        greenbutton2 = Commentable(pg.Rect((1337, 400, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_gruener_knopf.ogg'))
+        greenbutton3 = Commentable(pg.Rect((852, 400, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_gruener_knopf.ogg'))
+        redbutton1 = Commentable(pg.Rect((901, 406, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
+        redbutton2 = Commentable(pg.Rect((1291, 428, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
+        redbutton3 = Commentable(pg.Rect((1652, 482, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
+        greybutton = Commentable(pg.Rect((1375, 362, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'hier_fehlt_wohl_etwas.ogg'))
+        midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst[0])
+
+        self.clickable_lst = [ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), greyslot, greenslot, redslot, midwindow,
+                               greenbutton1, greenbutton2, greenbutton3, redbutton1, redbutton2, redbutton3, greybutton]

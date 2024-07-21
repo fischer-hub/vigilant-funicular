@@ -1,6 +1,7 @@
 import pygame as pg
 import src.animate as am
 from src.player import Player
+from src.overlay import Overlay
 from src.scene import Scene
 from scenes.scene1 import Scene1
 from scenes.elevator.elevator import ElevatorScene
@@ -58,6 +59,12 @@ def main():
     doctor_talk = am.StripAnimate('sprites/characters/dr_talk.png', frame_rate = 5, scale_factor = scale_factor)
     doctor_crouch = am.StripAnimate('sprites/characters/dr_crouch.png', frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
 
+    mid_window = am.StripAnimate('sprites/bg1_mid_window.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+
+    inventory = am.StripAnimate('sprites/inventory.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
+    menu_buttons = am.StripAnimate('sprites/menu_buttons-sheet.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+
+
     # init character (Player) objects
     doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (1000, 700))
     
@@ -68,11 +75,12 @@ def main():
 
 
     # init scene objects
-    scene1 = Scene1(doctor, cursor, ['sprites/red_slot2.png', 'sprites/green_slot.png', 'sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
+    scene1 = Scene1(doctor, cursor, [mid_window, 'sprites/red_slot2.png', 'sprites/green_slot.png', 'sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, ['scenes/elevator/elevator_inside.png', elevator_door, 'scenes/elevator/elevator_bg.png'], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
+    overlay = Overlay(doctor, cursor, [inventory, menu_buttons], [])
 
     # init scene handler
-    scene_handler = sc.SceneHandler([scene1, elevator_scene], doctor)
+    scene_handler = sc.SceneHandler([scene1, elevator_scene], doctor, overlay)
 
 
     # whatever that is
@@ -101,17 +109,24 @@ def main():
 
  
                  
-            if dev and event.type == pg.KEYDOWN:
-                if event.key == pg.K_q:
+            if event.type == pg.KEYDOWN:
+
+                if event.key == pg.K_q and dev:
                     record_collision_points(p1, p2, scale_factor, screen, str(sys.argv[2]))
+
+                elif event.key == pg.K_e:
+                    if overlay.hide:
+                        overlay.hide = False
+                    else:
+                        overlay.hide = True
 
             if event.type == pg.QUIT:
                 running = False
             
-
+        
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (908, 615, 110, 42))
-
+        #pg.draw.rect(screen, (255,255,255), (1709, 455, 40, 40))
+        
         cursor.draw(screen)
 
         #screen.blit(clickable_surf, change_scene_clickable)

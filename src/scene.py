@@ -4,13 +4,14 @@ import pickle
 
 
 class SceneHandler():
-    def __init__(self, scene_lst, player):
+    def __init__(self, scene_lst, player, overlay):
 
         self.scene_lst = scene_lst
         self.scene = self.scene_lst[0]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
         self.scene_idx = 0
+        self.overlay = overlay
 
     def change_scene(self, scene_idx):
         
@@ -36,12 +37,15 @@ class SceneHandler():
 
     def handle_event(self, event):
         event_response = self.scene.handle_event(event)
+        
+        if not self.overlay.hide: 
+            self.overlay.handle_event(event)
 
                    # handle MOUSEBUTTONUP
         if event.type == pg.MOUSEBUTTONUP:
                 mpos = pg.mouse.get_pos()
                 
-                if not self.player.talking:
+                if not self.player.talking and self.overlay.hide and event_response != 42:
                 
                     self.player.move_to(mpos)
                     print(mpos)
@@ -51,7 +55,7 @@ class SceneHandler():
                  #   p1.append(mpos[0])
                    # p2.append(mpos[1])
 
-        if event_response is not None:
+        if event_response is not None and event_response != 42:
             self.change_scene(event_response)
     
     def draw_bg(self, surface):
@@ -59,6 +63,10 @@ class SceneHandler():
 
     def draw_fg(self, surface):
         self.scene.draw_fg(surface)
+
+        if not self.overlay.hide:
+            self.overlay.draw_bg(surface)
+
 
 
 class Scene():
@@ -112,6 +120,7 @@ class Scene():
                 layer.draw(surface)
             else:
                 surface.blit(layer, (0, 0))
+
 
     def handle_event(self, event):
 

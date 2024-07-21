@@ -28,7 +28,7 @@ class StripAnimate(pg.sprite.Sprite):
     Methods:
         update(): Updates the sprite to the next frame based on the frame rate.
     """
-    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (0, 0), cycles = 0, default_frame = 0, pause = False):
+    def __init__(self, sprite_path: str, img_width = 0, scale_factor = 6, frame_rate = 1, pos = (0, 0), cycles = 0, default_frame = 0, pause = False, once = False):
         super(StripAnimate, self).__init__()
         
         # load sprite sheet image file
@@ -36,6 +36,7 @@ class StripAnimate(pg.sprite.Sprite):
 
         # index to keep track of which frame of the animation is currently displayed
         self.index = default_frame
+        self.default_frame = default_frame
 
         # pixel offset from sprite start to current frame
         self.sprite_offset = 0
@@ -68,8 +69,9 @@ class StripAnimate(pg.sprite.Sprite):
         # current number of animation cycles already played
         self.cycle_count = 1
 
-
         self.pause = pause
+
+        self.once = once
 
 
     def update(self):
@@ -93,14 +95,20 @@ class StripAnimate(pg.sprite.Sprite):
                 
                 # if cycle not 0 and cycle limit reached, return from update (end on last frame of spritesheet)
                 if self.cycles and (self.cycles <= self.cycle_count):
-                    print(self.cycle_count, self.cycles)
-                    #self.index = self.default_frame
+                    self.index = self.default_frame
+
+                    # if animation only plays once (e.g. on click), reset counter for next trigger
+                    if self.once:
+                        self.cycle_count = 1
+                        self.pause = True
+
                     return
                 
                 self.cycle_count += 1
                 self.index = 0
                 self.sprite_offset = 0
 
+            if self.once : print(self.index * self.img_width)
             self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
 
