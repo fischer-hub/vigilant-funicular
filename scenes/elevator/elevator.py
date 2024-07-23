@@ -25,6 +25,7 @@ class ElevatorDoor(Clickable):
 class ElevatorScene(Scene):
     def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor=6, dev=False):
         super().__init__(player, cursor, background_lst, foreground_lst, collision_file, scale_factor, dev)
+        self.id = 1
         
         #elevator_door_clickable = Clickable(pg.Rect(((1180, 420, 50, 55))), elevator_door_animation)
         elevator_door_clickable = ElevatorDoor(pg.Rect(((1180, 420, 50, 55))), self)

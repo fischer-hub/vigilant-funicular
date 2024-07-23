@@ -61,6 +61,7 @@ class GreenSlot(Clickable):
 class Scene1(Scene):
     def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
         super().__init__(player, cursor, background_lst, foreground_lst, collision_file, scale_factor, dev)
+        self.id = 0
         
         redslot = GreySlot(pg.Rect((1500, 625, 130, 52)), self.player, os.path.join('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'))
         greenslot = GreenSlot(pg.Rect((908, 615, 110, 42)), self.player, [os.path.join('sounds', 'characters', 'dr', 'das_koennte_spaeter.ogg'), os.path.join('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg')], self)
