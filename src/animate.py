@@ -108,7 +108,6 @@ class StripAnimate(pg.sprite.Sprite):
                 self.index = 0
                 self.sprite_offset = 0
 
-            if self.once : print(self.index * self.img_width)
             self.image = pg.transform.scale_by(self.sprite_sheet.subsurface([self.index * self.img_width, 0, self.img_width, self.img_height]), self.scale_factor)
 
 

@@ -17,7 +17,12 @@ class MidWindow(Clickable):
         super().__init__(rect, animation, hover_cursor, sound)
     
     def on_click(self):
-        self.animation.pause = False
+        if self.animation.pause:
+            self.animation.pause = False
+            sound = pg.mixer.Sound(self.sound)
+            sound.set_volume(0.2)
+            sound.play()
+
         return 42
     
 class GreySlot(Clickable):
@@ -41,9 +46,9 @@ class GreenSlot(Clickable):
     def turn_red(self):
         self.player.crouch()
         self.red = True
-        green_slot_img = self.scene.bg_lst[1]
-        self.scene.bg_lst[1] = self.scene.bg_lst[0]
-        self.scene.bg_lst[0] = green_slot_img
+        green_slot_img = self.scene.bg_lst[2]
+        self.scene.bg_lst[2] = self.scene.bg_lst[1]
+        self.scene.bg_lst[1] = green_slot_img
 
     def on_click(self):
         if not self.red:
@@ -67,7 +72,7 @@ class Scene1(Scene):
         redbutton2 = Commentable(pg.Rect((1291, 428, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
         redbutton3 = Commentable(pg.Rect((1652, 482, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
         greybutton = Commentable(pg.Rect((1375, 362, 40, 40)), self.player, sound = os.path.join('sounds', 'characters', 'dr', 'hier_fehlt_wohl_etwas.ogg'))
-        midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst[0])
+        midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst[0], sound = os.path.join('sounds', 'water.ogg'))
 
         self.clickable_lst = [ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), greyslot, greenslot, redslot, midwindow,
                                greenbutton1, greenbutton2, greenbutton3, redbutton1, redbutton2, redbutton3, greybutton]

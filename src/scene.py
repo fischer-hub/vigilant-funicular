@@ -23,6 +23,7 @@ class SceneHandler():
 
         # we stopped moving to destination, ready for next scnene
         if not self.player.moving:
+        #if True:
             print('Changing to scene: ', self.scene_idx)
             self.scene = self.scene_lst[scene_idx]
             self.player.rect[0] = self.scene.player_spawn[0]

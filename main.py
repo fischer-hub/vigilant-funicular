@@ -125,7 +125,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (1709, 455, 40, 40))
+        #pg.draw.rect(screen, (255,255,255), (0, 128, 100, 900))
         
         cursor.draw(screen)
 

@@ -19,6 +19,7 @@ class Player():
         self.rect = self.current_animation.rect
         self.flip = False
         self.steps_sound = pg.mixer.Sound(os.path.join('sounds', 'characters', 'dr', 'steps.ogg'))
+        self.talk_sound = None
         self.function_to_exec = None
 
     
@@ -46,6 +47,8 @@ class Player():
 
         if (self.current_animation.rect[0:1]) != pos:
 
+            # stop step sound if we already were walking
+            self.steps_sound.stop()
             self.steps_sound.play(loops = -1)
 
             # the position of the mouse click is where the feet of the character should end up on the screen, approximately, shift and scale the sprite accordingly
@@ -111,7 +114,9 @@ class Player():
         self.current_animation.draw(surface, self.flip)
 
     def talk(self, audiofile):
-        sound = pg.mixer.Sound(audiofile)
+        # stop talking if we are already talking to prevent talking over ourself
+        if self.talk_sound: self.talk_sound.stop()
+        self.talk_sound = pg.mixer.Sound(audiofile)
         self.talking = True
         self.moving = False
         self.rect = self.current_animation.rect
@@ -119,9 +124,9 @@ class Player():
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])
         self.steps_sound.stop()
-        pg.mixer.Sound.play(sound)
+        pg.mixer.Sound.play(self.talk_sound)
         print('talk triggered')
-        pg.time.set_timer(pg.USEREVENT + 3, int(sound.get_length() * 1000), 1)
+        pg.time.set_timer(pg.USEREVENT + 3, int(self.talk_sound.get_length() * 1000), 1)
 
     def crouch(self):
         self.rect = self.current_animation.rect

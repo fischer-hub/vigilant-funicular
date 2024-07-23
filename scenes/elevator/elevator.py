@@ -1,4 +1,4 @@
-from src.scene import Scene, Clickable
+from src.scene import Scene, Clickable, ChangeScene
 import src.animate as am
 import pygame as pg
 from src.scene import Clickable
@@ -31,5 +31,5 @@ class ElevatorScene(Scene):
         #elevator_door_clickable = pg.Rect((1203, 447, 20, 20)
 
         
-        self.clickable_lst = [elevator_door_clickable]
+        self.clickable_lst = [ChangeScene(pg.Rect(1849, 128, 100, 900), 0, hover_cursor = 4), ChangeScene(pg.Rect(0, 128, 100, 900), 1, hover_cursor = 3), elevator_door_clickable]
         self.player_spawn = (1737 - (int((self.player.current_animation.img_height / 2 ) * self.player.current_animation.scale_factor)), 870 - (int((self.player.current_animation.img_width / 1.5 ) * self.player.current_animation.scale_factor)))
