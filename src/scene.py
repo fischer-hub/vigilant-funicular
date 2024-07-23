@@ -25,7 +25,7 @@ class SceneHandler():
         if not self.player.moving:
         #if True:
             print('Changing to scene: ', self.scene_idx)
-            self.scene = self.scene_lst[scene_idx]
+            self.scene = self.scene_lst[self.scene_idx]
             self.player.rect[0] = self.scene.player_spawn[0]
             self.player.rect[1] = self.scene.player_spawn[1]
             self.player.destination_pos = self.scene.player_spawn
@@ -45,11 +45,11 @@ class SceneHandler():
                    # handle MOUSEBUTTONUP
         if event.type == pg.MOUSEBUTTONUP:
                 mpos = pg.mouse.get_pos()
+                print(mpos)
                 
                 if not self.player.talking and self.overlay.hide and event_response != 42:
                 
                     self.player.move_to(mpos)
-                    print(mpos)
 
                 # maybe put this in an extra fct at some point
                 #if dev:
@@ -79,6 +79,7 @@ class Scene():
         self.show_collision = False
         self.clickable_lst = []
         self.last_clickable_idx = None
+        self.scale_factor = scale_factor
 
         self.player = player
         self.player_spawn = (960, 520)

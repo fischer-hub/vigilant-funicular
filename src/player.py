@@ -21,6 +21,7 @@ class Player():
         self.steps_sound = pg.mixer.Sound(os.path.join('sounds', 'characters', 'dr', 'steps.ogg'))
         self.talk_sound = None
         self.function_to_exec = None
+        self.inventory = []
 
     
 
@@ -129,8 +130,10 @@ class Player():
         pg.time.set_timer(pg.USEREVENT + 3, int(self.talk_sound.get_length() * 1000), 1)
 
     def crouch(self):
+        print('pauseself: ', self.current_animation.pause)
         self.rect = self.current_animation.rect
         self.current_animation = self.animation_lst[3]
+        self.current_animation.pause = False
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])
 

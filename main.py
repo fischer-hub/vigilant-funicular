@@ -57,9 +57,10 @@ def main():
     doctor_idle = am.StripAnimate('sprites/dr_idle.png', scale_factor = scale_factor)
     doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5, scale_factor = scale_factor)
     doctor_talk = am.StripAnimate('sprites/characters/dr_talk.png', frame_rate = 5, scale_factor = scale_factor)
-    doctor_crouch = am.StripAnimate('sprites/characters/dr_crouch.png', frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
+    doctor_crouch = am.StripAnimate('sprites/characters/dr_crouch.png', frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once =  True)
 
     mid_window = am.StripAnimate('sprites/bg1_mid_window.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+    bird = am.StripAnimate('sprites/bird.png', img_width = 320, frame_rate = 14, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
 
     inventory = am.StripAnimate('sprites/inventory.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
     menu_buttons = am.StripAnimate('sprites/menu_buttons-sheet.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
@@ -75,7 +76,7 @@ def main():
 
 
     # init scene objects
-    scene1 = Scene1(doctor, cursor, [mid_window, 'sprites/red_slot2.png', 'sprites/green_slot.png', 'sprites/bg1.png'], [pipe, 'sprites/fg1.png'], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
+    scene1 = Scene1(doctor, cursor, [mid_window, 'sprites/red_slot2.png', 'sprites/green_slot.png', 'sprites/bg1.png'], [pipe, 'sprites/fg1.png', bird], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, ['scenes/elevator/elevator_inside.png', elevator_door, 'scenes/elevator/elevator_bg.png'], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     overlay = Overlay(doctor, cursor, [inventory, menu_buttons], [])
 
@@ -125,7 +126,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (0, 128, 100, 900))
+        #pg.draw.rect(screen, (255,255,255), (1650, 0, 250, 100))
         
         cursor.draw(screen)
 
