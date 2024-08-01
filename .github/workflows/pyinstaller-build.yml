@@ -41,7 +41,7 @@ jobs:
         path: dist/
 
     - name: Set up GitHub CLI
-      uses: actions/setup-gh-cli@v1
+      uses: ksivamuthu/actions-setup-gh-cli@v3
 
     - name: Create GitHub Release
       id: create_release
