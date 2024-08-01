@@ -47,7 +47,6 @@ jobs:
       run: |
         mv dist/vigilant dist/vigilant-${{ matrix.os }}-${{ github.sha }}
 
-
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -97,8 +96,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}
-        asset_name: vigilant-${{ matrix.os }}-${{ github.sha }}
+        asset_path: ./dist/vigilant-ubuntu-latest-${{ github.sha }}
+        asset_name: vigilant-ubuntu-latest-${{ github.sha }}
         asset_content_type: application/octet-stream
 
     - name: Upload macOS executable to Release
@@ -107,8 +106,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}
-        asset_name: vigilant-${{ matrix.os }}-${{ github.sha }}
+        asset_path: ./dist/vigilant-macos-latest-${{ github.sha }}
+        asset_name: vigilant-macos-latest-${{ github.sha }}
         asset_content_type: application/octet-stream
 
     - name: Upload Windows executable to Release
@@ -117,6 +116,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
-        asset_name: vigilant-${{ matrix.os }}-${{ github.sha }}.exe
+        asset_path: ./dist/vigilant-windows-latest-${{ github.sha }}.exe
+        asset_name: vigilant-windows-latest-${{ github.sha }}.exe
         asset_content_type: application/octet-stream
