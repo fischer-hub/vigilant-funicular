@@ -53,7 +53,6 @@ def main():
 
     # init StripAnimate objects (maybe move this to the respective scene class for cleaner code)
     pipe = am.StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
-    elevator_door = am.StripAnimate('scenes/elevator/elevator_doors.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
     doctor_idle = am.StripAnimate('sprites/dr_idle.png', scale_factor = scale_factor)
     doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5, scale_factor = scale_factor)
     doctor_talk = am.StripAnimate('sprites/characters/dr_talk.png', frame_rate = 5, scale_factor = scale_factor)
@@ -77,7 +76,7 @@ def main():
 
     # init scene objects
     scene1 = Scene1(doctor, cursor, [mid_window, 'sprites/red_slot2.png', 'sprites/green_slot.png', 'sprites/bg1.png'], [pipe, 'sprites/fg1.png', bird], collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
-    elevator_scene = ElevatorScene(doctor, cursor, ['scenes/elevator/elevator_inside.png', elevator_door, 'scenes/elevator/elevator_bg.png'], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
+    elevator_scene = ElevatorScene(doctor, cursor, [], [], collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     overlay = Overlay(doctor, cursor, [inventory, menu_buttons], [])
 
     # init scene handler
@@ -126,7 +125,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (1650, 0, 250, 100))
+        #pg.draw.rect(screen, (255,255,255), (190, 150, 280, 180))
         
         cursor.draw(screen)
 

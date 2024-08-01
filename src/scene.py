@@ -22,14 +22,18 @@ class SceneHandler():
             self.scene_idx = scene_idx
 
         # we stopped moving to destination, ready for next scnene
-        if not self.player.moving:
-        #if True:
+        #if not self.player.moving:
+        if True:
             print('Changing to scene: ', self.scene_idx)
             self.scene = self.scene_lst[self.scene_idx]
             self.player.rect[0] = self.scene.player_spawn[0]
             self.player.rect[1] = self.scene.player_spawn[1]
             self.player.destination_pos = self.scene.player_spawn
             self.player.collision_lst = self.scene.collision_lst
+            
+            for sound in self.scene.sound_lst: 
+                sound.stop()
+                sound.play(-1)
 
         # we are still walking, send userevent to check in a few seconds again
         else:
@@ -45,7 +49,7 @@ class SceneHandler():
                    # handle MOUSEBUTTONUP
         if event.type == pg.MOUSEBUTTONUP:
                 mpos = pg.mouse.get_pos()
-                print(mpos)
+                print('mpos is ', mpos)
                 
                 if not self.player.talking and self.overlay.hide and event_response != 42:
                 
@@ -80,9 +84,11 @@ class Scene():
         self.clickable_lst = []
         self.last_clickable_idx = None
         self.scale_factor = scale_factor
+        self.sound_lst = []
 
         self.player = player
         self.player_spawn = (960, 520)
+
 
         if not dev and collision_file:
             with open((collision_file), "rb") as fn: 
@@ -146,7 +152,7 @@ class Scene():
             return -1
         
         elif event.type == pg.USEREVENT + 2:
-            # trigger scene change in scene handler onto last scene index
+            # i forgot what this does but I think it retriggers a clickable that we walk to, maybe replace that with the new move_to() function feature
             self.clickable_lst[self.last_clickable_idx].on_click()
         
         elif event.type == pg.USEREVENT + 3:
@@ -160,11 +166,11 @@ class Scene():
 
 
 class Clickable():
-    def __init__(self, rect, animation = None, hover_cursor = 0, sound = None):
+    def __init__(self, rect, animation = None, hover_cursor = 0, sound_lst = None):
         self.rect = rect
         self.animation = animation
         self.hover_cursor = hover_cursor
-        self.sound = sound
+        self.sound_lst = sound_lst
 
     def on_click(self):
         print(f"Clickable does not implement own on_click() method. Clicked on object at {self.rect.topleft}")
@@ -179,3 +185,13 @@ class ChangeScene(Clickable):
         print('change scene triggered')
         return self.next_scene_idx
     
+
+class Commentable(Clickable):
+    '''A class implementing a clickable object that triggers the main player talk function, given a sound (comment) to play at the same time.'''
+    def __init__(self, rect, player, animation=None, hover_cursor = 2, sound_lst=None):
+        super().__init__(rect, animation, hover_cursor, sound_lst)
+        self.player = player
+    
+    def on_click(self):
+        self.player.talk(self.sound_lst)
+        return None
