@@ -37,14 +37,16 @@ jobs:
       run: |
         pyinstaller --onefile main.py -n vigilant
 
-    - name: Archive executable
+    - name: Rename executable for Windows
+      if: runner.os == 'Windows'
       run: |
-        os=${{ matrix.os }}
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          mv dist/vigilant.exe dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
-        else
-          mv dist/vigilant dist/vigilant-${{ matrix.os }}-${{ github.sha }}
-        fi
+        rename dist/vigilant.exe dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
+
+    - name: Rename executable for macOS and Linux
+      if: runner.os != 'Windows'
+      run: |
+        mv dist/vigilant dist/vigilant-${{ matrix.os }}-${{ github.sha }}
+
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
