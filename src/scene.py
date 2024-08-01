@@ -1,6 +1,7 @@
 import pygame as pg
 from src.animate import StripAnimate
 import pickle
+from lib.helper import path
 
 
 class SceneHandler():
@@ -77,8 +78,8 @@ class SceneHandler():
 class Scene():
     def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
 
-        self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in background_lst]
-        self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(layer).convert_alpha(), scale_factor) for layer in foreground_lst]
+        self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in background_lst]
+        self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in foreground_lst]
 
         self.show_collision = False
         self.clickable_lst = []
@@ -91,7 +92,7 @@ class Scene():
 
 
         if not dev and collision_file:
-            with open((collision_file), "rb") as fn: 
+            with open(path(collision_file), "rb") as fn: 
                 self.collision_lst = pickle.load(fn)
 
                 # scale collision values to resolution

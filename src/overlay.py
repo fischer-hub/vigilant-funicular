@@ -1,8 +1,7 @@
 from src.scene import Scene, Clickable
 from src.animate import StripAnimate
 import pygame as pg
-import os
-
+from lib.helper import path
 
 class Menu(Clickable):
     def __init__(self, rect, player, animation, sound = None, hover_cursor = 0):
@@ -12,7 +11,7 @@ class Menu(Clickable):
 
     def on_click(self):
         self.animation.pause = False
-        sound = pg.mixer.Sound(self.sound)
+        sound = pg.mixer.Sound(path(self.sound))
         sound.play()
         
 
@@ -26,13 +25,13 @@ class Overlay(Scene):
         self.inventory_slot_coord_lst_adjusted = [ (pos[0] - (16 * self.scale_factor), pos[1] - (16 * self.scale_factor)) for pos in self.inventory_slot_coord_lst ]
 
 
-        menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, self.bg_lst[1], sound = os.path.join('sounds', 'button_click.ogg'))
+        menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, self.bg_lst[1], sound = path('sounds', 'button_click.ogg'))
 
         self.clickable_lst = [menu]
 
     def draw_bg(self, surface):
         
-        inventory_sprites = [os.path.join('sprites', 'items', f"{item}.png") for item in self.player.inventory]
+        inventory_sprites = [path('sprites', 'items', f"{item}.png") for item in self.player.inventory]
         render_lst = self.bg_lst + [ StripAnimate(layer, 32, self.scale_factor, pos = pos) for layer, pos in zip(inventory_sprites, self.inventory_slot_coord_lst_adjusted)]
 
         for layer in render_lst:

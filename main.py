@@ -5,8 +5,7 @@ from src.overlay import Overlay
 from src.scene import Scene
 from scenes.scene1 import Scene1
 from scenes.elevator.elevator import ElevatorScene
-from lib.helper import record_collision_points
-from lib.helper import set_dev
+from lib.helper import record_collision_points, set_dev, path
 import src.scene as sc
 import sys, os
 
@@ -69,7 +68,7 @@ def main():
     doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (1000, 700))
     
     # set background music
-    pg.mixer.music.load('sounds/music/colorful_flowers.mp3')
+    pg.mixer.music.load(path('sounds/music/colorful_flowers.mp3'))
     pg.mixer.music.set_volume(0.1)
     pg.mixer.music.play()
 

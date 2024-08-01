@@ -1,4 +1,4 @@
-from lib.helper import sign
+from lib.helper import sign, path
 from src.animate import StripAnimate
 import pygame as pg
 import os
@@ -18,7 +18,7 @@ class Player():
         self.current_animation.rect[1] = pos[1]
         self.rect = self.current_animation.rect
         self.flip = False
-        self.steps_sound = pg.mixer.Sound(os.path.join('sounds', 'characters', 'dr', 'steps.ogg'))
+        self.steps_sound = pg.mixer.Sound(path('sounds/characters/dr/steps.ogg'))
         self.talk_sound = None
         self.function_to_exec = None
         self.inventory = []
@@ -117,7 +117,7 @@ class Player():
     def talk(self, audiofile):
         # stop talking if we are already talking to prevent talking over ourself
         if self.talk_sound: self.talk_sound.stop()
-        self.talk_sound = pg.mixer.Sound(audiofile)
+        self.talk_sound = pg.mixer.Sound(path(audiofile))
         self.talking = True
         self.moving = False
         self.rect = self.current_animation.rect

@@ -45,6 +45,7 @@ jobs:
     - name: Rename executable for macOS and Linux
       if: runner.os != 'Windows'
       run: |
+        chmod +x dist/vigilant
         mv dist/vigilant dist/vigilant-${{ matrix.os }}-${{ github.sha }}
 
     - name: Upload artifact

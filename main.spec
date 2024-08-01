@@ -14,6 +14,8 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+a.datas += Tree('./', excludes=['./build/*'])
+
 pyz = PYZ(a.pure)
 
 exe = EXE(

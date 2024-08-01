@@ -1,5 +1,5 @@
 import pygame as pg
-
+from lib.helper import path
 
 class StripAnimate(pg.sprite.Sprite):
     """
@@ -32,7 +32,7 @@ class StripAnimate(pg.sprite.Sprite):
         super(StripAnimate, self).__init__()
         
         # load sprite sheet image file
-        self.sprite_sheet = pg.image.load(sprite_path).convert_alpha()
+        self.sprite_sheet = pg.image.load(path(sprite_path)).convert_alpha()
 
         # index to keep track of which frame of the animation is currently displayed
         self.index = default_frame
