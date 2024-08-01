@@ -40,7 +40,7 @@ jobs:
     - name: Rename executable for Windows
       if: runner.os == 'Windows'
       run: |
-        rename dist/vigilant.exe dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
+        Rename-Item -Path dist/vigilant.exe -NewName dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
 
     - name: Rename executable for macOS and Linux
       if: runner.os != 'Windows'
