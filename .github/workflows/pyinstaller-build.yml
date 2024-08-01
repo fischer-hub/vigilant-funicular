@@ -51,7 +51,9 @@ jobs:
     - name: Upload executable as release asset
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          gh release upload ${{ github.sha }} dist/vigilant.exe
+          gh release upload ${{ github.sha }} dist/vigilant-windows-${{ github.sha }}.exe
+        elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+          gh release upload ${{ github.sha }} dist/vigilant-macos-${{ github.sha }}
         else
-          gh release upload ${{ github.sha }} dist/vigilant
+          gh release upload ${{ github.sha }} dist/vigilant-linux-${{ github.sha }}
         fi
