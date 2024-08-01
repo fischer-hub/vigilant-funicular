@@ -74,13 +74,22 @@ class Player():
         """Updates the sprite to the next frame based on the frame rate and changes the rect position until it matches the destination position."""
 
         # check if we arrived at destination position
-        if self.current_animation.rect[0] == self.destination_pos[0] and self.current_animation.rect[1] == self.destination_pos[1] and not self.talking and self.moving:
+        if self.current_animation.rect[0] == self.destination_pos[0] and self.current_animation.rect[1] == self.destination_pos[1] and self.moving: # and self.talking
             self.moving = False
-            self.current_animation = self.animation_lst[0]
+            
+
+            if not self.talking:
+                self.current_animation = self.animation_lst[0]
+
             self.steps_sound.stop()
+
             if self.function_to_exec: 
                 self.function_to_exec()
                 self.function_to_exec = None
+
+            #if self.talking:
+            #    self.current_animation = self.animation_lst[2]
+            #    self.current_animation.pause = False
 
         else:
 
@@ -136,4 +145,6 @@ class Player():
         self.current_animation.pause = False
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])
+        # check if we are talking in a few secs when crouch animation is done
+        pg.time.set_timer(pg.USEREVENT + 4, 1000)
 

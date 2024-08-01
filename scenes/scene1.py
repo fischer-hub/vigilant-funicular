@@ -1,6 +1,7 @@
 from src.scene import Scene, Clickable, ChangeScene, Commentable
 import pygame as pg
 from lib.helper import path
+from src.animate import StripAnimate
 
 class Bird(Clickable):
     def __init__(self, rect, animation=None, hover_cursor = 1, sound_lst=None):
@@ -50,9 +51,7 @@ class GreenSlot(Clickable):
     def turn_red(self):
         self.player.crouch()
         self.red = True
-        green_slot_img = self.scene.bg_lst[2]
-        self.scene.bg_lst[2] = self.scene.bg_lst[1]
-        self.scene.bg_lst[1] = green_slot_img
+        self.scene.bg_lst.pop('green_slot')
         grab_sound = pg.mixer.Sound(path(self.sound_lst[2]))
         grab_sound.play(maxtime = 1000)
         self.player.inventory.append('ATPContainerFilled')
@@ -71,10 +70,19 @@ class GreenSlot(Clickable):
             
 
 class Scene1(Scene):
-    def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
-        super().__init__(player, cursor, background_lst, foreground_lst, collision_file, scale_factor, dev)
+    def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
+        super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.id = 0
+
+        mid_window = StripAnimate('sprites/bg1_mid_window.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        bird = StripAnimate('sprites/bird.png', img_width = 320, frame_rate = 14, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        pipe = StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
+
+        self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png', 
+                       'green_slot': 'sprites/green_slot.png'}
         
+        self.fg_lst = {'pipe': pipe, 'fg1': 'sprites/fg1.png', 'bird': bird}
+
         redslot = GreySlot(pg.Rect((1500, 625, 130, 52)), self.player, path('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'))
         greenslot = GreenSlot(pg.Rect((908, 615, 110, 42)), self.player, [path('sounds', 'characters', 'dr', 'das_koennte_spaeter.ogg'), path('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'), path('sounds', 'characters', 'dr', 'grab.ogg')], self)
         greyslot = GreySlot(pg.Rect((1200, 620, 130, 52)), self.player, path('sounds', 'characters', 'dr', 'sieht_aus_als.ogg'))
@@ -85,10 +93,15 @@ class Scene1(Scene):
         redbutton2 = Commentable(pg.Rect((1291, 428, 40, 40)), self.player, sound_lst = path('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
         redbutton3 = Commentable(pg.Rect((1652, 482, 40, 40)), self.player, sound_lst = path('sounds', 'characters', 'dr', 'ein_roter_knopf.ogg'))
         greybutton = Commentable(pg.Rect((1375, 362, 40, 40)), self.player, sound_lst = path('sounds', 'characters', 'dr', 'hier_fehlt_wohl_etwas.ogg'))
-        midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst[0], sound_lst = path('sounds', 'water.ogg'))
-        bird = Bird(pg.Rect((1650, 0, 250, 100)), self.fg_lst[-1], sound_lst = path('sounds', 'bird_flap.ogg'))
+        midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst['mid_window'], sound_lst = path('sounds', 'water.ogg'))
+        bird = Bird(pg.Rect((1650, 0, 250, 100)), self.fg_lst['bird'], sound_lst = path('sounds', 'bird_flap.ogg'))
+
+        self.bg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.bg_lst.items()}
+        self.fg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.fg_lst.items()}
 
 
-
-        self.clickable_lst = [ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), greyslot, greenslot, redslot, midwindow,
-                               greenbutton1, greenbutton2, greenbutton3, redbutton1, redbutton2, redbutton3, greybutton, bird]
+        self.clickable_lst = {'change_scene_left': ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), 'grey_slot': greyslot, 'green_slot': greenslot,
+                              'red_slot': redslot, 'mid_window': midwindow, 'green_button1': greenbutton1,
+                              'green_button2': greenbutton2, 'green_button3': greenbutton3, 'red_button1': redbutton1,
+                              'red_button2': redbutton2, 'red_button3': redbutton3, 'grey_button': greybutton,
+                              'bird': bird}

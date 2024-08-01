@@ -44,5 +44,5 @@ def path(*args):
         base_path = sys._MEIPASS
     except AttributeError:
         base_path = ''
-    print('returning path : ', os.path.join(base_path, relative_path))
+    print('got: ', args[0], 'returning path : ', os.path.join(base_path, relative_path))
     return os.path.join(base_path, relative_path)

@@ -26,6 +26,7 @@ class SceneHandler():
         #if not self.player.moving:
         if True:
             print('Changing to scene: ', self.scene_idx)
+            [sound.stop() for sound in self.scene.sound_lst]
             self.scene = self.scene_lst[self.scene_idx]
             self.player.rect[0] = self.scene.player_spawn[0]
             self.player.rect[1] = self.scene.player_spawn[1]
@@ -42,10 +43,12 @@ class SceneHandler():
 
 
     def handle_event(self, event):
-        event_response = self.scene.handle_event(event)
-        
+        event_response = None
+
         if not self.overlay.hide: 
             self.overlay.handle_event(event)
+        else:
+            event_response = self.scene.handle_event(event)
 
                    # handle MOUSEBUTTONUP
         if event.type == pg.MOUSEBUTTONUP:
@@ -60,6 +63,7 @@ class SceneHandler():
                 #if dev:
                  #   p1.append(mpos[0])
                    # p2.append(mpos[1])
+
 
         if event_response is not None and event_response != 42:
             self.change_scene(event_response)
@@ -76,13 +80,15 @@ class SceneHandler():
 
 
 class Scene():
-    def __init__(self, player, cursor, background_lst, foreground_lst, collision_file = None, scale_factor = 6, dev = False):
+    def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
 
-        self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in background_lst]
-        self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in foreground_lst]
+        #self.bg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in background_lst]
+        #self.fg_lst = [layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor) for layer in foreground_lst]
 
         self.show_collision = False
-        self.clickable_lst = []
+        self.clickable_lst = {}
+        self.bg_lst = {}
+        self.fg_lst = {}
         self.last_clickable_idx = None
         self.scale_factor = scale_factor
         self.sound_lst = []
@@ -109,7 +115,7 @@ class Scene():
             
 
     def draw_bg(self, surface):
-        for layer in self.bg_lst:
+        for layer in self.bg_lst.values():
             if type(layer) is StripAnimate:
                 layer.update()
                 layer.draw(surface)
@@ -123,7 +129,7 @@ class Scene():
             for i in range(len(self.collision_lst)):
                 surface.set_at((i, self.collision_lst[i]), "red")
 
-        for layer in self.fg_lst:
+        for layer in self.fg_lst.values():
             if type(layer) is StripAnimate:
                 layer.update()
                 layer.draw(surface)
@@ -136,9 +142,16 @@ class Scene():
         """Handle event specific to scene, return index of scnene to change to in scene_lst if change event is triggered."""
         
         # set cursor to default img, when no clickable is hovered, we just leave it, this ensures the cursor defaults when we stop hovering
-        self.cursor.change_cursor(0)        
+        self.cursor.change_cursor(0)   
         
-        for obj in self.clickable_lst:
+        if event.type == pg.MOUSEBUTTONUP and self.cursor.item:
+            self.cursor.cursor_img = self.cursor.cursor_img_default
+
+            # do this when consuming /using an item
+            #self.player.inventory.remove(self.cursor.item)     
+            self.cursor.item = ''
+        
+        for obj in self.clickable_lst.values():
             if obj.rect.collidepoint(pg.mouse.get_pos()):
                 self.cursor.change_cursor(obj.hover_cursor)
 
@@ -164,6 +177,13 @@ class Scene():
             self.player.talking = False
             print('talking ends')
         
+        elif event.type == pg.USEREVENT + 4:
+            # trigger start of talking animation after crouching
+            if self.player.talking:
+                self.player.rect = self.player.current_animation.rect
+                self.player.current_animation = self.player.animation_lst[2]
+                self.player.current_animation.rect = self.player.rect
+                self.player.talking = True
 
 
 class Clickable():
@@ -196,3 +216,28 @@ class Commentable(Clickable):
     def on_click(self):
         self.player.talk(self.sound_lst)
         return None
+    
+
+class Collectable(Clickable):
+    def __init__(self, rect, player, sound_lst, scene, list_name, item_id_lst, animation=None, hover_cursor = 1):
+        super().__init__(rect, animation, hover_cursor, sound_lst)
+        self.player = player
+        self.scene = scene
+        self.collected = False
+        self.list_name = list_name
+        self.grab_sound = pg.mixer.Sound(path('sounds', 'characters', 'dr', 'grab.ogg'))
+        self.item_id_lst = item_id_lst
+        self.sound_lst = sound_lst
+    
+    def collect(self):
+        self.player.crouch()
+        self.collected = True
+        self.scene.bg_lst.pop(self.list_name)
+        self.scene.clickable_lst.pop(self.list_name)
+        self.grab_sound.play(maxtime = 1000)
+        [self.player.inventory.append(item) for item in self.item_id_lst]
+
+    def on_click(self):
+        if not self.collected:
+            self.player.talk(self.sound_lst[0])
+            self.player.move_to(pg.mouse.get_pos(), self.collect)
