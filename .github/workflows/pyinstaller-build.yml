@@ -35,7 +35,7 @@ jobs:
 
     - name: Run PyInstaller
       run: |
-        pyinstaller -n vigilant main.spec
+        pyinstaller main.spec
 
     - name: Rename executable for Windows
       if: runner.os == 'Windows'
