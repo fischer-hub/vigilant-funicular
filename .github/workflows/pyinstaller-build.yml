@@ -91,12 +91,12 @@ jobs:
         generate_release_notes: true
         overwrite: true
         body: |
-        Pre-release versions are not consistent between tags. This is just used 
-        as a way to automatically package the game as executables for different 
-        operating systems. Each executable version is suffixed with its github
-        commit hash to identify versions. Pre-releases might be overwritten with
-        newer versions (differentiable by the github commit hash in the file 
-        name).
+          Pre-release versions are not consistent between tags. This is just used 
+          as a way to automatically package the game as executables for different 
+          operating systems. Each executable version is suffixed with its github
+          commit hash to identify versions. Pre-releases might be overwritten with
+          newer versions (differentiable by the github commit hash in the file 
+          name).
 
     - name: Upload Linux executable to Release
       uses: actions/upload-release-asset@v1
