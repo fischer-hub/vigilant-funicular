@@ -40,15 +40,35 @@ jobs:
         name: executable-${{ matrix.os }}
         path: dist/
 
-    - name: Set up GitHub CLI
-      uses: ksivamuthu/actions-setup-gh-cli@v3
+    - name: Install GitHub CLI on Linux or macOS
+      if: runner.os != 'Windows'
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt-get update
+        sudo apt-get install gh -y
+
+    - name: Install GitHub CLI on Windows
+      if: runner.os == 'Windows'
+      run: |
+        choco install gh
+
+    - name: Authenticate GitHub CLI
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh auth login --with-token <<< "$GITHUB_TOKEN"
 
     - name: Create GitHub Release
       id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create ${{ github.sha }} --generate-notes --title "Build ${{ github.sha }}"
+        gh release create ${{ github.sha }} --generate-notes --title "${{ github.sha }}"
 
     - name: Upload executable as release asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
           gh release upload ${{ github.sha }} dist/vigilant-windows-${{ github.sha }}.exe
