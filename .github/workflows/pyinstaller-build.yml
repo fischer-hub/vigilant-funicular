@@ -82,6 +82,8 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.event.inputs.release_version }}
         release_name: ${{ github.event.inputs.release_version }}
@@ -91,6 +93,8 @@ jobs:
 
     - name: Upload Linux executable to Release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}
@@ -99,6 +103,8 @@ jobs:
 
     - name: Upload macOS executable to Release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}
@@ -107,6 +113,8 @@ jobs:
 
     - name: Upload Windows executable to Release
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/vigilant-${{ matrix.os }}-${{ github.sha }}.exe
