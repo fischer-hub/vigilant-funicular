@@ -2,6 +2,8 @@ import math, os, sys, yaml, datetime
 from scipy.interpolate import CubicSpline
 import pickle
 import numpy as np
+import requests
+
 
 dev = False
 
@@ -70,6 +72,12 @@ def load_config():
         
         if not config:
              print("Found config file but the file is empty.")
+             config = {'no_config': True}
+        else:
+             # select latest save for now
+             config = config[max(config)]
+             config['no_config'] = False
+
          
         return config
         
@@ -85,7 +93,8 @@ def save_config(config):
     if not config:
          config = {}
     
-    config['date'] = str(datetime.datetime.now())
+    tmp = {}
+    tmp[str(datetime.datetime.now())] = config
     # running on windows
     if 'APPDATA' in os.environ:
         confighome = os.environ['APPDATA']
@@ -99,7 +108,19 @@ def save_config(config):
     configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
 
     with open(configfile, 'a') as file:
-        yaml.dump(config, file)
+        yaml.dump(tmp, file)
 
     print('saved config to file: ', configfile)
+
+
+def check_update(current_version):
+    '''Returns true when the latest remote version is different from the current one. Else returns false, also returns false when remote is not reachable.'''
+    try:
+        response = requests.get("https://api.github.com/repos/fischer-hub/vigilant-funicular/releases/latest").json()
+        print(response["name"], current_version)
+    except:
+         print('Failed to check remote version, probs connection issue.')
+
+         return False
+    return response["name"] != current_version
          

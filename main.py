@@ -16,24 +16,28 @@ import sys
 
 def main():
 
-    
+    # load config file
+    config = util.load_config()
+    config['version'] = 'v0.0.1-alpha'
+
+    # I think this doesnt even work..    
     if len(sys.argv) > 1:
-        util.set_dev(True)
-        dev = True
+        config['dev'] = dev = True 
+        print('Running in dev mode')
     else:
-        util.set_dev(False)
-        dev = False
+        config['dev'] = dev = False
+
 
     # pg setup
     pg.init()
-    scale_factor = 3
+    pg.font.init()
+
+    scale_factor = 3 if not 'scale_factor' in config else config['scale_factor']
     screen = pg.display.set_mode((320 * scale_factor, 180 * scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
     dt = 0
 
-    # load config file
-    config = util.load_config()
     p1 = []
     p2 = []
 

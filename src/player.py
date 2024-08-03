@@ -148,5 +148,4 @@ class Player():
         pg.time.set_timer(pg.USEREVENT + 4, 1000)
 
     def save(self):
-        print(self.config)
         save_config(self.config)

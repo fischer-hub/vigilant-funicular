@@ -1,5 +1,6 @@
 from src.scene import Scene, Clickable, Btn
 from src.animate import StripAnimate
+from src.text import Text
 import pygame as pg
 from lib.helper import path, save_config
 
@@ -46,7 +47,6 @@ class Overlay(Scene):
                                                pg.Rect(1430, 390, 280, 200), pg.Rect(180, 640, 280, 190), pg.Rect(480, 660, 280, 200),
                                                pg.Rect(820, 660, 280, 200), pg.Rect(1145, 660, 250, 200), pg.Rect(1445, 650, 270, 220) ]
         
-        print(self.inventory_clickable_rects_lst)
         
         self.inventory_clickable_rects_lst = { idx: InventorySlot(rect, self.cursor, idx, self.player, self.scale_factor) for idx, rect in enumerate(self.inventory_clickable_rects_lst) }
 
@@ -78,14 +78,14 @@ class Overlay(Scene):
         render_lst = [StripAnimate(layer, 32, self.scale_factor, pos = pos) for layer, pos in zip(inventory_sprites, self.inventory_slot_coord_lst_adjusted)]
 
         for layer in self.bg_lst.values():
-            if type(layer) is StripAnimate:
+            if type(layer) is StripAnimate or type(layer) is Text:
                 layer.update()
                 layer.draw(surface)
             else:
                 surface.blit(layer, (0, 0))
 
         for layer in render_lst:
-            if type(layer) is StripAnimate:
+            if type(layer) is StripAnimate or type(layer) is Text:
                 layer.update()
                 layer.draw(surface)
             else:

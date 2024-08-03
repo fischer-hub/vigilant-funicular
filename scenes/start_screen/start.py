@@ -1,18 +1,24 @@
 from src.scene import Scene, Clickable, ChangeScene, Commentable
+from src.text import Text
 import pygame as pg
-from lib.helper import path
+from lib.helper import path, save_config, check_update
 from src.animate import StripAnimate
+import os, sys
+
 
 
 class SizeMeter(Clickable):
     '''A class implementing a clickable object that triggers the main player talk function, given a sound (comment) to play at the same time.'''
-    def __init__(self, rect, scene, idx, animation = None, hover_cursor = 0, sound_lst=None):
+    def __init__(self, rect, scene, idx, animation = None, hover_cursor = 0, sound_lst = None):
         super().__init__(rect, animation, hover_cursor, sound_lst)
         self.scene = scene
         self.idx = idx
     
     def on_click(self):
         self.scene.fg_lst['size_meter'].index = self.idx
+        self.scene.config['scale_factor'] = self.idx
+        save_config(self.scene.config)
+        os.execv(sys.executable, ['python'] + sys.argv)
         return None
     
 
@@ -26,7 +32,6 @@ class Btn(Clickable):
         self. id = id
 
     def on_click(self):
-        return_value = None
         if not self.clicked:
             self.animation.pause = False
             sound = pg.mixer.Sound(path(self.sound))
@@ -38,6 +43,7 @@ class Btn(Clickable):
             self.clicked = False
             if self.fct:
                 return self.fct()
+
 
 class Msg(Clickable):
     def __init__(self, rect, animation = None, sound = None, hover_cursor = 0, scene = None):
@@ -59,6 +65,7 @@ class Msg(Clickable):
             self.scene.fg_lst.pop('caution_msg')
             self.clicked = False
 
+
 class StartScreen(Scene):
     def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False, config = None):
         super().__init__(player, cursor, collision_file, scale_factor, dev)
@@ -74,9 +81,10 @@ class StartScreen(Scene):
         start_button = StripAnimate('scenes/start_screen/start_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         update_button = StripAnimate('scenes/start_screen/update_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         new_game = StripAnimate('scenes/start_screen/new_game.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
-        size_meter = StripAnimate('scenes/start_screen/size_meter.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 1, pause = True, once = True)
+        size_meter = StripAnimate('scenes/start_screen/size_meter.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = scale_factor, pause = True, once = True)
         caution_msg = StripAnimate('scenes/start_screen/caution_message.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
 
+        version_txt = Text(f"version: {self.config['version']}{', dev' if dev else ''}{', update available!' if check_update(self.config['version']) else ''}", pg.Rect(0,-20,0,0), 4, (255, 255, 255), scale_factor)
 
         # clickables
         start_button_clickable = Btn(pg.Rect(460, 120, 1050, 220), sound = path('sounds', 'button_click.ogg'), animation = start_button, scene = self, id = 'start_button')
@@ -90,10 +98,10 @@ class StartScreen(Scene):
 
         self.bg_lst = {}
         self.fg_lst = {'bg': bg, 'start_button': start_button, 'update_button': update_button, 'size_meter': size_meter,
-                       'new_game': new_game}
+                       'new_game': new_game, 'version': version_txt}
         
         self.clickable_lst.update({'start_button': start_button_clickable, 'update_button': update_button_clickable, 'new_game': new_game_button_clickable})
 
-        if not self.config:
+        if self.config['no_config']:
             self.fg_lst.update({'caution_msg': caution_msg})
             self.clickable_lst.update({'caution_msg': caution_msg_clickable})
