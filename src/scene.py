@@ -64,7 +64,7 @@ class SceneHandler():
                  #   p1.append(mpos[0])
                    # p2.append(mpos[1])
 
-
+        print(event_response)
         if event_response is not None and event_response != 42:
             self.change_scene(event_response)
     
@@ -89,12 +89,12 @@ class Scene():
         self.clickable_lst = {}
         self.bg_lst = {}
         self.fg_lst = {}
-        self.last_clickable_idx = None
+        self.last_clickable_id = None
         self.scale_factor = scale_factor
         self.sound_lst = []
 
         self.player = player
-        self.player_spawn = (960, 520)
+        self.player_spawn = (960 * ((self.scale_factor - 1) / 6), 520 * ((self.scale_factor - 1) / 6))
 
 
         if not dev and collision_file:
@@ -102,7 +102,19 @@ class Scene():
                 self.collision_lst = pickle.load(fn)
 
                 # scale collision values to resolution
-                self.collision_lst = self.collision_lst[::(7 - scale_factor)]
+                if scale_factor == 5:
+                    del self.collision_lst[5::6]
+                elif scale_factor == 4:
+                    del self.collision_lst[4::5]
+                elif scale_factor == 3:
+                    self.collision_lst = self.collision_lst[::2]
+                elif scale_factor == 2:
+                    self.collision_lst = self.collision_lst[::3]
+                elif scale_factor == 1:
+                    self.collision_lst = self.collision_lst[::6]
+
+                self.collision_lst = [ int(value * (self.scale_factor / 6)) for value in self.collision_lst ]
+
         elif not collision_file:
             print('No collision file defined for this scene, initializing collision values to upper screen bound 0.')
             self.collision_lst = [0] * 8000
@@ -168,7 +180,7 @@ class Scene():
         
         elif event.type == pg.USEREVENT + 2:
             # i forgot what this does but I think it retriggers a clickable that we walk to, maybe replace that with the new move_to() function feature
-            self.clickable_lst[self.last_clickable_idx].on_click()
+            return self.clickable_lst[self.last_clickable_id].on_click()
         
         elif event.type == pg.USEREVENT + 3:
             # trigger end of talking animation

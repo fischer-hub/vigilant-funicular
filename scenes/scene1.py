@@ -3,6 +3,7 @@ import pygame as pg
 from lib.helper import path
 from src.animate import StripAnimate
 
+
 class Bird(Clickable):
     def __init__(self, rect, animation=None, hover_cursor = 1, sound_lst=None):
         super().__init__(rect, animation, hover_cursor, sound_lst)

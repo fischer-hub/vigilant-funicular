@@ -85,7 +85,7 @@ class ElevatorScene(Scene):
         yoyo_snoring.set_volume(0.3)
 
         self.player_spawn = (1737 - (int((self.player.current_animation.img_height / 2 ) * self.player.current_animation.scale_factor)), 870 - (int((self.player.current_animation.img_width / 1.5 ) * self.player.current_animation.scale_factor)))
-
+        self.player_spawn = (1737 * ((self.scale_factor - 1) / 6), 870 * ((self.scale_factor - 1) / 6))
 
         self.bg_lst = {'elevator_inside': 'scenes/elevator/elevator_inside.png', 'elevator_door': elevator_door, 'elevator_band': 'scenes/elevator/band.png', 
                         'elevator_bg': 'scenes/elevator/elevator_bg.png', 'yoyo': yoyo, 'bottles': bottles, 

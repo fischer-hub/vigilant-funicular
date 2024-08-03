@@ -55,10 +55,40 @@ def load_config():
     # running on windows
     if 'APPDATA' in os.environ:
         confighome = os.environ['APPDATA']
-    # running on linux
+    # running on unix supporting XDG CONFIG
     elif 'XDG_CONFIG_HOME' in os.environ:
         confighome = os.environ['XDG_CONFIG_HOME']
+    # just put it in home
     else:
         confighome = os.path.join(os.environ['HOME'], '.config')
-    configpath = os.path.join(confighome, 'programname')
+    
+    configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
+
+    if os.path.isfile(os.path.join(configfile, 'config.yaml')):
+        with open('config.yml', 'r') as file:
+            config = yaml.safe_load(file)
+         
+        return config
+        
+    else:
+
+        return {}
+
+
+def save_config(config):
+    
+    # running on windows
+    if 'APPDATA' in os.environ:
+        confighome = os.environ['APPDATA']
+    # running on unix supporting XDG CONFIG
+    elif 'XDG_CONFIG_HOME' in os.environ:
+        confighome = os.environ['XDG_CONFIG_HOME']
+    # just put it in home
+    else:
+        confighome = os.path.join(os.environ['HOME'], '.config')
+    
+    configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
+
+    with open(configfile, 'w') as file:
+        yaml.dump(config, file)
          

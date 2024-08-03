@@ -7,9 +7,9 @@ from scenes.start_screen.start import StartScreen
 from scenes.scene1 import Scene1
 from scenes.elevator.elevator import ElevatorScene
 from scenes.bathroom.bathroom import Bathroom
-from lib.helper import record_collision_points, set_dev, path
+import lib.helper as util 
 import src.scene as sc
-import sys, yaml
+import sys
 
 
 
@@ -18,20 +18,22 @@ def main():
 
     
     if len(sys.argv) > 1:
-        set_dev(True)
+        util.set_dev(True)
         dev = True
     else:
-        set_dev(False)
+        util.set_dev(False)
         dev = False
 
     # pg setup
     pg.init()
-    scale_factor = 4
-    screen = pg.display.set_mode((320 * scale_factor, 180 *scale_factor), display=0)
+    scale_factor = 6
+    screen = pg.display.set_mode((320 * scale_factor, 180 * scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
     dt = 0
 
+    # load config file
+    config = util.load_config()
     p1 = []
     p2 = []
 
@@ -49,16 +51,16 @@ def main():
 
 
     # init character (Player) objects
-    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (-100, -100))
+    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (-100, -100), config = config)
     
     # set background music
-    pg.mixer.music.load(path('sounds/music/colorful_flowers.mp3'))
+    pg.mixer.music.load(util.path('sounds/music/colorful_flowers.mp3'))
     pg.mixer.music.set_volume(0.1)
     pg.mixer.music.play()
 
 
     # init scene objects
-    start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
+    start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev, config = config)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor )
@@ -98,7 +100,7 @@ def main():
 
 
                 if event.key == pg.K_q and dev:
-                    record_collision_points(p1, p2, scale_factor, screen, str(sys.argv[2]))
+                    util.record_collision_points(p1, p2, scale_factor, screen, str(sys.argv[2]))
 
                 elif event.key == pg.K_e:
                     if overlay.hide:
@@ -111,7 +113,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (460 *(scale_factor/6), 770 *(scale_factor/6), 1050*(scale_factor/6), 220*(scale_factor/6)))
+        #pg.draw.rect(screen, (255,255,255), ((524, 708, 800, 150)))
 
 
 

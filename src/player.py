@@ -4,7 +4,7 @@ import pygame as pg
 import os
 
 class Player():
-    def __init__(self, anim_lst, collision_lst = [], step_size = 5, pos = (5, 5), dev = False):
+    def __init__(self, anim_lst, collision_lst = [], step_size = 5, pos = (5, 5), dev = False, config = {}):
 
         self.dev = dev
         self.collision_lst = collision_lst
@@ -22,6 +22,7 @@ class Player():
         self.talk_sound = None
         self.function_to_exec = None
         self.inventory = []
+        self.config = config
 
     
 
@@ -35,7 +36,6 @@ class Player():
         # catch funky x coords going out of bounds, not a good fix but oh well this isnt a good game so its sufficient
         #if pos[0] < 0: 
         #    pos = (0, pos[1])
-
         # if we reach the collision bound, set y to y value at collision border, dont ask me whats going on with the x offset i dont understand why its working but im not touching it anymore
         if not self.dev and (pos[1] <= (self.collision_lst[pos[0] + x_offset] - y_offset)):
             
@@ -139,7 +139,6 @@ class Player():
         pg.time.set_timer(pg.USEREVENT + 3, int(self.talk_sound.get_length() * 1000), 1)
 
     def crouch(self):
-        print('pauseself: ', self.current_animation.pause)
         self.rect = self.current_animation.rect
         self.current_animation = self.animation_lst[3]
         self.current_animation.pause = False
