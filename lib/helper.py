@@ -1,4 +1,4 @@
-import math, os, sys
+import math, os, sys, yaml
 from scipy.interpolate import CubicSpline
 import pickle
 import numpy as np
@@ -44,5 +44,21 @@ def path(*args):
         base_path = sys._MEIPASS
     except AttributeError:
         base_path = ''
-    print('got: ', args[0], 'returning path : ', os.path.join(base_path, relative_path))
+    #print('got: ', args[0], 'returning path : ', os.path.join(base_path, relative_path))
     return os.path.join(base_path, relative_path)
+
+
+#def scale_rect(rect, scale_factor):
+
+def load_config():
+     
+    # running on windows
+    if 'APPDATA' in os.environ:
+        confighome = os.environ['APPDATA']
+    # running on linux
+    elif 'XDG_CONFIG_HOME' in os.environ:
+        confighome = os.environ['XDG_CONFIG_HOME']
+    else:
+        confighome = os.path.join(os.environ['HOME'], '.config')
+    configpath = os.path.join(confighome, 'programname')
+         

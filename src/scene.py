@@ -8,10 +8,10 @@ class SceneHandler():
     def __init__(self, scene_lst, player, overlay):
 
         self.scene_lst = scene_lst
-        self.scene = self.scene_lst[0]
+        self.scene = self.scene_lst[3]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
-        self.scene_idx = 0
+        self.scene_idx = 3
         self.overlay = overlay
 
     def change_scene(self, scene_idx):
@@ -55,7 +55,7 @@ class SceneHandler():
                 mpos = pg.mouse.get_pos()
                 print('mpos is ', mpos)
                 
-                if not self.player.talking and self.overlay.hide and event_response != 42:
+                if not self.player.talking and self.overlay.hide and event_response != 42 and not self.scene.id == 3:
                 
                     self.player.move_to(mpos)
 
@@ -152,11 +152,12 @@ class Scene():
             self.cursor.item = ''
         
         for obj in self.clickable_lst.values():
-            if obj.rect.collidepoint(pg.mouse.get_pos()):
+            scaled_rect = pg.Rect(tuple(int(value * (self.scale_factor / 6)) for value in obj.rect))
+            if scaled_rect.collidepoint(pg.mouse.get_pos()):
                 self.cursor.change_cursor(obj.hover_cursor)
 
             
-            if event.type == pg.MOUSEBUTTONUP and obj.rect.collidepoint(event.pos):
+            if event.type == pg.MOUSEBUTTONUP and scaled_rect.collidepoint(event.pos):
                 return obj.on_click()
         
 

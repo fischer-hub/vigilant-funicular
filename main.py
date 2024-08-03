@@ -2,30 +2,16 @@ import pygame as pg
 import src.animate as am
 from src.player import Player
 from src.overlay import Overlay
-from src.scene import Scene
+from src.cursor import Cursor
+from scenes.start_screen.start import StartScreen
 from scenes.scene1 import Scene1
 from scenes.elevator.elevator import ElevatorScene
 from scenes.bathroom.bathroom import Bathroom
 from lib.helper import record_collision_points, set_dev, path
 import src.scene as sc
-import sys, os
+import sys, yaml
 
 
-class Cursor:
-    def __init__(self, animation_obj):
-        self.cursor_img = animation_obj
-        self.cursor_img_default = animation_obj
-        self.item = ''
-
-    # set cursor img position to mouse position and draw cursor img to screen
-    def draw(self, surface):
-        self.cursor_img.rect.center = pg.mouse.get_pos()
-        self.cursor_img.draw(surface)
-
-    # change the cursor img to index on cursor img sprite
-    def change_cursor(self, cursor_sprite_index):
-        self.cursor_img.index = cursor_sprite_index
-        self.cursor_img.update()
 
 
 def main():
@@ -40,7 +26,7 @@ def main():
 
     # pg setup
     pg.init()
-    scale_factor = 6
+    scale_factor = 4
     screen = pg.display.set_mode((320 * scale_factor, 180 *scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
@@ -63,7 +49,7 @@ def main():
 
 
     # init character (Player) objects
-    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (1000, 700))
+    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (-100, -100))
     
     # set background music
     pg.mixer.music.load(path('sounds/music/colorful_flowers.mp3'))
@@ -72,13 +58,14 @@ def main():
 
 
     # init scene objects
+    start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor )
     overlay = Overlay(doctor, cursor)
 
     # init scene handler
-    scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom], doctor, overlay)
+    scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, start_screen], doctor, overlay)
 
 
     # whatever that is
@@ -124,7 +111,8 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (210, 160, 250, 150))
+        #pg.draw.rect(screen, (255,255,255), (460 *(scale_factor/6), 770 *(scale_factor/6), 1050*(scale_factor/6), 220*(scale_factor/6)))
+
 
 
         
