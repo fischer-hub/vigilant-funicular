@@ -16,16 +16,17 @@ class Menu(Clickable):
         
 
 class InventorySlot(Clickable):
-    def __init__(self, rect, cursor, inventory_idx, player, animation = None, sound = None, hover_cursor = 0):
+    def __init__(self, rect, cursor, inventory_idx, player, scale_factor, animation = None, sound = None, hover_cursor = 0):
         super().__init__(rect, animation, hover_cursor, sound)
         self.sound = sound
         self.cursor = cursor
         self.player = player
         self.inventory_idx = inventory_idx
+        self.scale_factor = scale_factor
 
     def on_click(self):
         if len(self.player.inventory) > self.inventory_idx:
-            self.cursor.cursor_img = StripAnimate(f"sprites/items/{self.player.inventory[self.inventory_idx]}.png", 32)
+            self.cursor.cursor_img = StripAnimate(f"sprites/items/{self.player.inventory[self.inventory_idx]}.png", 32, scale_factor = self.scale_factor)
             self.cursor.item = self.player.inventory[self.inventory_idx]
 
 
@@ -33,8 +34,11 @@ class Overlay(Scene):
     def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
         super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.hide = True
+        self.scale_factor = scale_factor
         self.inventory_slot_coord_lst = [(318, 234), (638, 237), (925, 246), (1235, 241), (1542, 250), (329, 467), (646, 474), 
                                          (945, 481), (1240, 482), (1560, 485), (308, 745), (618, 754), (960, 753), (1258, 741), (1579, 744)]
+
+        self.inventory_slot_coord_lst = [ tuple(int(value * (self.scale_factor / 6)) for value in coord) for coord in self.inventory_slot_coord_lst ]
         
         self.inventory_clickable_rects_lst = [ pg.Rect(210, 160, 250, 150), pg.Rect(510, 160, 270, 165), pg.Rect(810, 160, 250, 165),
                                                pg.Rect(1110, 160, 260, 175), pg.Rect(1410, 160, 270, 175), pg.Rect(200, 360, 270, 210),
@@ -42,7 +46,9 @@ class Overlay(Scene):
                                                pg.Rect(1430, 390, 280, 200), pg.Rect(180, 640, 280, 190), pg.Rect(480, 660, 280, 200),
                                                pg.Rect(820, 660, 280, 200), pg.Rect(1145, 660, 250, 200), pg.Rect(1445, 650, 270, 220) ]
         
-        self.inventory_clickable_rects_lst = { idx: InventorySlot(rect, self.cursor, idx, self.player) for idx, rect in enumerate(self.inventory_clickable_rects_lst) }
+        print(self.inventory_clickable_rects_lst)
+        
+        self.inventory_clickable_rects_lst = { idx: InventorySlot(rect, self.cursor, idx, self.player, self.scale_factor) for idx, rect in enumerate(self.inventory_clickable_rects_lst) }
 
         self.inventory_slot_coord_lst_adjusted = [ (pos[0] - (16 * self.scale_factor), pos[1] - (16 * self.scale_factor)) for pos in self.inventory_slot_coord_lst ]
 

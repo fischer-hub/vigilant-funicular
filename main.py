@@ -26,7 +26,7 @@ def main():
 
     # pg setup
     pg.init()
-    scale_factor = 6
+    scale_factor = 3
     screen = pg.display.set_mode((320 * scale_factor, 180 * scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
@@ -64,7 +64,7 @@ def main():
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor )
-    overlay = Overlay(doctor, cursor)
+    overlay = Overlay(doctor, cursor, scale_factor = scale_factor)
 
     # init scene handler
     scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, start_screen], doctor, overlay)
