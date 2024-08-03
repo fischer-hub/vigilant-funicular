@@ -19,7 +19,6 @@ class SizeMeter(Clickable):
         self.scene.config['scale_factor'] = self.idx
         save_config(self.scene.config)
         os.execv(sys.executable, ['python'] + sys.argv)
-        return None
     
 
 class Btn(Clickable):
@@ -79,7 +78,7 @@ class StartScreen(Scene):
         # sprites
         bg = StripAnimate('scenes/start_screen/bg.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         start_button = StripAnimate('scenes/start_screen/start_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
-        update_button = StripAnimate('scenes/start_screen/update_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        update_button = StripAnimate('scenes/start_screen/update_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0 if check_update(self.config['version']) else 1, pause = True, once = True)
         new_game = StripAnimate('scenes/start_screen/new_game.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         size_meter = StripAnimate('scenes/start_screen/size_meter.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = scale_factor, pause = True, once = True)
         caution_msg = StripAnimate('scenes/start_screen/caution_message.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
@@ -87,7 +86,7 @@ class StartScreen(Scene):
         version_txt = Text(f"version: {self.config['version']}{', dev' if dev else ''}{', update available!' if check_update(self.config['version']) else ''}", pg.Rect(0,-20,0,0), 4, (255, 255, 255), scale_factor)
 
         # clickables
-        start_button_clickable = Btn(pg.Rect(460, 120, 1050, 220), sound = path('sounds', 'button_click.ogg'), animation = start_button, scene = self, id = 'start_button')
+        start_button_clickable = Btn(pg.Rect(460, 120, 1050, 220), sound = path('sounds', 'button_click.ogg'), animation = start_button, scene = self, id = 'start_button', fct = lambda: 4)
         new_game_button_clickable = Btn(pg.Rect((460, 440, 1050, 220)), sound = path('sounds', 'button_click.ogg'), animation = new_game, fct = lambda: 0, scene = self, id = 'new_game')
         update_button_clickable = Btn(pg.Rect((460, 770, 1050, 220)), sound = path('sounds', 'button_click.ogg'), animation = update_button, scene = self, id = 'update_button')
         caution_msg_clickable = Msg(pg.Rect((524, 708, 800, 150)), sound = path('sounds', 'button_click.ogg'), animation = caution_msg, scene = self)
@@ -100,7 +99,10 @@ class StartScreen(Scene):
         self.fg_lst = {'bg': bg, 'start_button': start_button, 'update_button': update_button, 'size_meter': size_meter,
                        'new_game': new_game, 'version': version_txt}
         
-        self.clickable_lst.update({'start_button': start_button_clickable, 'update_button': update_button_clickable, 'new_game': new_game_button_clickable})
+        self.clickable_lst.update({'start_button': start_button_clickable, 'new_game': new_game_button_clickable})
+
+        if check_update(self.config['version']): self.clickable_lst.update({'update_button': update_button_clickable})
+
 
         if self.config['no_config']:
             self.fg_lst.update({'caution_msg': caution_msg})

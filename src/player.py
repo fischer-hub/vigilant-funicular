@@ -21,7 +21,7 @@ class Player():
         self.steps_sound = pg.mixer.Sound(path('sounds/characters/dr/steps.ogg'))
         self.talk_sound = None
         self.function_to_exec = None
-        self.inventory = []
+        self.inventory = ['ATPContainerFilled']
         self.config = config
 
     
@@ -148,4 +148,5 @@ class Player():
         pg.time.set_timer(pg.USEREVENT + 4, 1000)
 
     def save(self):
+        self.config['savegame'].update({'inventory': self.inventory})
         save_config(self.config)

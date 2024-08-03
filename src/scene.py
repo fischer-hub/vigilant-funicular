@@ -56,7 +56,7 @@ class SceneHandler():
                 mpos = pg.mouse.get_pos()
                 print('mpos is ', mpos)
                 
-                if not self.player.talking and self.overlay.hide and event_response != 42 and not self.scene.id == 3:
+                if not self.player.talking and self.overlay.hide and event_response != 42 and not self.scene.id == 3 and not self.scene.id == 4:
                 
                     self.player.move_to(mpos)
 

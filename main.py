@@ -3,6 +3,7 @@ import src.animate as am
 from src.player import Player
 from src.overlay import Overlay
 from src.cursor import Cursor
+from src.load_game import LoadGame
 from scenes.start_screen.start import StartScreen
 from scenes.scene1 import Scene1
 from scenes.elevator.elevator import ElevatorScene
@@ -69,9 +70,12 @@ def main():
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor )
     overlay = Overlay(doctor, cursor, scale_factor = scale_factor)
+    load_game = LoadGame(doctor, cursor, scale_factor = scale_factor)
 
     # init scene handler
-    scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, start_screen], doctor, overlay)
+    scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, 
+                                     start_screen, load_game],
+                                     doctor, overlay)
 
 
     # whatever that is
