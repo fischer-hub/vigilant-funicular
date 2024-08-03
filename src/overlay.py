@@ -1,7 +1,7 @@
-from src.scene import Scene, Clickable
+from src.scene import Scene, Clickable, Btn
 from src.animate import StripAnimate
 import pygame as pg
-from lib.helper import path
+from lib.helper import path, save_config
 
 class Menu(Clickable):
     def __init__(self, rect, player, animation, sound = None, hover_cursor = 0):
@@ -49,14 +49,16 @@ class Overlay(Scene):
 
     
         inventory = StripAnimate('sprites/inventory.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
-        menu_buttons = StripAnimate('sprites/menu_buttons-sheet.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
-
-        self.bg_lst = {'inventory': inventory, 'menu_buttons': menu_buttons}
+        menu_btn = StripAnimate('sprites/menu_btn.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        save_btn = StripAnimate('sprites/save_btn.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        
+        self.bg_lst = {'inventory': inventory, 'menu_btn': menu_btn, 'save_btn': save_btn}
         self.fg_lst = {}
 
 
-        menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, menu_buttons, sound = path('sounds', 'button_click.ogg'))
-        self.clickable_lst = {'menu': menu}
+        menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, menu_btn, sound = path('sounds', 'button_click.ogg'))
+        save_btn_cb = Btn(pg.Rect((60, 909, 340, 135)), sound = path('sounds', 'button_click.ogg'), animation = save_btn, scene = self, id = 'save_btn', fct = self.player.save)
+        self.clickable_lst = {'menu': menu, 'save_btn': save_btn_cb}
         self.clickable_lst.update(self.inventory_clickable_rects_lst)
 
 

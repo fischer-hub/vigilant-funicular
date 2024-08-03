@@ -64,7 +64,6 @@ class SceneHandler():
                  #   p1.append(mpos[0])
                    # p2.append(mpos[1])
 
-        print(event_response)
         if event_response is not None and event_response != 42:
             self.change_scene(event_response)
     
@@ -254,3 +253,26 @@ class Collectable(Clickable):
         if not self.collected:
             self.player.talk(self.sound_lst[0])
             self.player.move_to(pg.mouse.get_pos(), self.collect)
+
+
+class Btn(Clickable):
+    def __init__(self, rect, animation = None, sound = None, hover_cursor = 0, fct = None, id = None, scene = None):
+        super().__init__(rect, animation, hover_cursor, sound)
+        self.sound = sound
+        self.fct = fct
+        self.clicked = False
+        self.scene = scene
+        self. id = id
+
+    def on_click(self):
+        if not self.clicked:
+            self.animation.pause = False
+            sound = pg.mixer.Sound(path(self.sound))
+            sound.play()
+            self.clicked = True
+            self.scene.last_clickable_id = self.id
+            pg.time.set_timer(event = pg.USEREVENT + 2, millis = 800, loops = 1)
+        else:
+            self.clicked = False
+            if self.fct:
+                return self.fct()

@@ -1,4 +1,4 @@
-import math, os, sys, yaml
+import math, os, sys, yaml, datetime
 from scipy.interpolate import CubicSpline
 import pickle
 import numpy as np
@@ -64,19 +64,28 @@ def load_config():
     
     configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
 
-    if os.path.isfile(os.path.join(configfile, 'config.yaml')):
-        with open('config.yml', 'r') as file:
+    if os.path.isfile(configfile):
+        with open(configfile, 'r') as file:
             config = yaml.safe_load(file)
+        
+        if not config:
+             print("Found config file but the file is empty.")
          
         return config
         
     else:
+        os.makedirs(os.path.dirname(configfile), exist_ok=True)
+        with open(configfile, 'w'): pass
 
         return {}
 
 
 def save_config(config):
+
+    if not config:
+         config = {}
     
+    config['date'] = str(datetime.datetime.now())
     # running on windows
     if 'APPDATA' in os.environ:
         confighome = os.environ['APPDATA']
@@ -89,6 +98,8 @@ def save_config(config):
     
     configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
 
-    with open(configfile, 'w') as file:
+    with open(configfile, 'a') as file:
         yaml.dump(config, file)
+
+    print('saved config to file: ', configfile)
          

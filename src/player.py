@@ -1,4 +1,4 @@
-from lib.helper import sign, path
+from lib.helper import sign, path, save_config
 from src.animate import StripAnimate
 import pygame as pg
 import os
@@ -147,3 +147,6 @@ class Player():
         # check if we are talking in a few secs when crouch animation is done
         pg.time.set_timer(pg.USEREVENT + 4, 1000)
 
+    def save(self):
+        print(self.config)
+        save_config(self.config)
