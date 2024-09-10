@@ -34,6 +34,7 @@ def main():
     pg.font.init()
 
     scale_factor = 3 if not 'scale_factor' in config else config['scale_factor']
+    if dev: scale_factor = 6
     screen = pg.display.set_mode((320 * scale_factor, 180 * scale_factor), display=0)
     clock = pg.time.Clock()
     running = True
@@ -68,7 +69,7 @@ def main():
     start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev, config = config)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
-    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, dev = dev )
+    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, collision_file = 'scenes/bathroom/collision.pickle', dev = dev)
     overlay = Overlay(doctor, cursor, scale_factor = scale_factor, dev = dev)
     load_game = LoadGame(doctor, cursor, scale_factor = scale_factor, dev = dev)
 
@@ -79,11 +80,11 @@ def main():
 
 
     # whatever that is
-    if dev: elevator_scene.draw_bg(screen)
-
+    if dev: 
+        bathroom.draw_bg(screen)
+        scene_handler.scene = bathroom
 
     while running:
-
         
         if not dev:
 
@@ -95,6 +96,7 @@ def main():
 
             # load and display foreground
             scene_handler.draw_fg(screen)
+            
 
         # poll for events
         for event in pg.event.get():
@@ -102,12 +104,17 @@ def main():
             # we have to handle events moving the player to catch cases where a clickable was clicked but we dont want to walk to mous position
             scene_handler.handle_event(event)
 
- 
-                 
+            if dev and event.type == pg.MOUSEBUTTONUP:
+                mpos = pg.mouse.get_pos()
+                print('recording poitn: ', mpos)
+                p1.append(mpos[0])
+                p2.append(mpos[1])
+
             if event.type == pg.KEYDOWN:
 
 
                 if event.key == pg.K_q and dev:
+                    print("recording collisions to: ", str(sys.argv[2]))
                     util.record_collision_points(p1, p2, scale_factor, screen, str(sys.argv[2]))
 
                 elif event.key == pg.K_e:
@@ -122,9 +129,6 @@ def main():
         
         # draw rect on screen
         #pg.draw.rect(screen, (255,255,255), ((17, 30, 300, 105)))
-
-
-
         
         cursor.draw(screen)
 

@@ -97,6 +97,7 @@ class Scene():
         self.last_clickable_id = None
         self.scale_factor = scale_factor
         self.sound_lst = []
+        self.dev = dev 
 
         self.player = player
         self.player_spawn = (960 * ((self.scale_factor - 1) / 6), 520 * ((self.scale_factor - 1) / 6))

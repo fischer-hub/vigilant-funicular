@@ -95,8 +95,8 @@ class ElevatorScene(Scene):
         self.fg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.fg_lst.items()}
 
         
-        self.clickable_lst = {'right_change_scene': ChangeScene(pg.Rect(1849, 128, 100, 900), 0, hover_cursor = 4), 'left_change_scene': ChangeScene(pg.Rect(0, 128, 100, 900), 1, hover_cursor = 3), 'elevator_door': elevator_door_clickable,
+        self.clickable_lst = {'right_change_scene': ChangeScene(pg.Rect(1849, 128, 100, 900), 0, hover_cursor = 4), 'elevator_door': elevator_door_clickable,
                                'bottles': bottles_clickable, 'yoyo': yoyo_sleeping_clickable, 'newton': newton_picture,
-                               'rohrzange': rohrzange_clickable, 'left_change_scene': ChangeScene(pg.Rect(0, 128, 100, 900), 2, hover_cursor = 3)}
+                               'rohrzange': rohrzange_clickable, 'left_change_scene': ChangeScene(pg.Rect(0, 128, 100, 900), 2, hover_cursor = 3, pos = (1880 * ((self.scale_factor - 1) / 6), 842 * ((self.scale_factor - 1) / 6)))}
 
         self.sound_lst += [yoyo_snoring]
