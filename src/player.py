@@ -23,6 +23,7 @@ class Player():
         self.function_to_exec = None
         self.inventory = ['ATPContainerFilled']
         self.config = config
+        self.scene = None
 
     
 
@@ -149,4 +150,15 @@ class Player():
 
     def save(self):
         self.config['savegame'].update({'inventory': self.inventory})
+        self.config['savegame'].update({'scene': self.scene.id})
+        self.config['savegame'].update({'pos1': self.current_animation.rect[0]})
+        self.config['savegame'].update({'pos2': self.current_animation.rect[1]})
+        self.config['savegame'].update({'destination_pos1': self.destination_pos[0]})
+        self.config['savegame'].update({'destination_pos2': self.destination_pos[1]})
         save_config(self.config)
+
+    def load(self):
+        self.inventory = self.config['savegame']['inventory']
+        self.current_animation.rect[0] = self.config['savegame']['pos1']
+        self.current_animation.rect[1] = self.config['savegame']['pos2']
+        self.destination_pos = (self.config['savegame']['destination_pos1'], self.config['savegame']['destination_pos2'])

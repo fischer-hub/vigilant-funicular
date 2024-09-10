@@ -68,9 +68,9 @@ def main():
     start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev, config = config)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
-    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor )
-    overlay = Overlay(doctor, cursor, scale_factor = scale_factor)
-    load_game = LoadGame(doctor, cursor, scale_factor = scale_factor)
+    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, dev = dev )
+    overlay = Overlay(doctor, cursor, scale_factor = scale_factor, dev = dev)
+    load_game = LoadGame(doctor, cursor, scale_factor = scale_factor, dev = dev)
 
     # init scene handler
     scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, 
@@ -121,7 +121,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), ((60, 909, 340, 135)))
+        #pg.draw.rect(screen, (255,255,255), ((17, 30, 300, 105)))
 
 
 

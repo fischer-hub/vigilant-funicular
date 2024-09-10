@@ -1,23 +1,30 @@
 import pygame as pg
-from src.scene import Scene, Clickable
-from lib.helper import path, get_savegames
+from src.scene import Scene, Clickable, Btn
+from lib.helper import path, get_savegames, load_savegame
 from src.animate import StripAnimate
 from src.text import Text
+import yaml
 
 
 class InventorySlot(Clickable):
-    def __init__(self, rect, cursor, inventory_idx, player, scale_factor, animation = None, sound = None, hover_cursor = 0):
+    def __init__(self, rect, cursor, inventory_idx, player, scale_factor, scene, animation = None, sound = None, hover_cursor = 0):
         super().__init__(rect, animation, hover_cursor, sound)
         self.sound = sound
+        self.scene = scene
         self.cursor = cursor
         self.player = player
         self.inventory_idx = inventory_idx
         self.scale_factor = scale_factor
 
     def on_click(self):
-        if len(self.player.inventory) > self.inventory_idx:
-            self.cursor.cursor_img = StripAnimate(f"sprites/items/{self.player.inventory[self.inventory_idx]}.png", 32, scale_factor = self.scale_factor)
-            self.cursor.item = self.player.inventory[self.inventory_idx]
+        if len(self.scene.savegame_lst) >= self.inventory_idx:
+            self.player.config['savegame'] = load_savegame(self.scene.savegame_lst[self.inventory_idx])
+            print('loaded savefile: ', self.player.config['savegame']['savefile'])
+            self.player.load()
+            return (self.player.config['savegame']['scene'], self.player.destination_pos)
+            
+        else:
+            print('There is no savegame in this slot you brat')
 
 
 
@@ -38,31 +45,32 @@ class LoadGame(Scene):
                                                pg.Rect(820, 660, 280, 200), pg.Rect(1145, 660, 250, 200), pg.Rect(1445, 650, 270, 220) ]
         
         
-        self.inventory_clickable_rects_lst = { idx: InventorySlot(rect, self.cursor, idx, self.player, self.scale_factor) for idx, rect in enumerate(self.inventory_clickable_rects_lst) }
+        self.inventory_clickable_rects_lst = { idx: InventorySlot(rect, self.cursor, idx, self.player, self.scale_factor, self) for idx, rect in enumerate(self.inventory_clickable_rects_lst) }
 
         self.inventory_slot_coord_lst_adjusted = [ (pos[0] - (17 * self.scale_factor), pos[1] - (13 * self.scale_factor)) for pos in self.inventory_slot_coord_lst ]
 
         self.savegame_lst = get_savegames()
 
+        # sprites
         bg = StripAnimate('scenes/start_screen/bg.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         inventory = StripAnimate('sprites/inventory.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0)
         menu_btn = StripAnimate('sprites/menu_btn.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
-        save_btn = StripAnimate('sprites/save_btn.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
+        back_btn = StripAnimate('sprites/back_btn.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         
+        back_btn_cl = Btn(pg.Rect((17, 30, 300, 105)), sound = path('sounds', 'button_click.ogg'), animation = back_btn, fct = lambda: (3,(0,0)), scene = self, id = 'back_btn')
+
+
         self.bg_lst = {}
-        self.fg_lst = {'bg': bg, 'inventory': inventory, 'menu_btn': menu_btn, 'save_btn': save_btn}
+        self.fg_lst = {'bg': bg, 'inventory': inventory, 'menu_btn': menu_btn, 'back_btn': back_btn}
 
 
-        #menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, menu_btn, sound = path('sounds', 'button_click.ogg'))
-        #save_btn_cb = Btn(pg.Rect((60, 909, 340, 135)), sound = path('sounds', 'button_click.ogg'), animation = save_btn, scene = self, id = 'save_btn', fct = self.player.save)
-        #self.clickable_lst = {'menu': menu, 'save_btn': save_btn_cb}
         self.clickable_lst.update(self.inventory_clickable_rects_lst)
+        self.clickable_lst.update({'back_btn': back_btn_cl})
 
 
         self.bg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key,layer in self.bg_lst.items()}
         self.fg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key,layer in self.fg_lst.items()}
 
-        print(self.savegame_lst)
 
     def draw_fg(self, surface):
         

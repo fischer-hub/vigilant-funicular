@@ -50,9 +50,7 @@ def path(*args):
     return os.path.join(base_path, relative_path)
 
 
-#def scale_rect(rect, scale_factor):
-
-def load_config():
+def get_config_home():
      
     # running on windows
     if 'APPDATA' in os.environ:
@@ -62,9 +60,41 @@ def load_config():
         confighome = os.environ['XDG_CONFIG_HOME']
     # just put it in home
     else:
-        confighome = os.path.join(os.environ['HOME'], '.config')
+        confighome = os.path.join(os.environ['HOME'], '.config', 'vigilant')
     
-    configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
+    return confighome
+
+
+def get_savegames():
+    '''Returns the list of save game files found in the config directory'''
+    savegames = []
+
+    confighome = get_config_home()
+
+    for file in os.listdir(confighome):
+        if file.endswith(".slay"):
+            savegames.append(file)
+        
+    return savegames
+
+
+def load_savegame(savegame):
+    
+    confighome = get_config_home()
+
+    with open(os.path.join(confighome, savegame), 'r') as file:
+        save_dict = yaml.safe_load(file)
+    
+    save_dict['savefile'] = os.path.join(confighome, savegame)
+    return save_dict
+
+
+def load_config():
+     
+
+    confighome = get_config_home()
+    
+    configfile = os.path.join(confighome, 'config.yaml')
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
@@ -78,7 +108,18 @@ def load_config():
              print("Loaded config file: ", configfile)
              config['no_config'] = False
 
-        config['savegame'] = {}
+        savegames = get_savegames()
+        
+        if savegames:
+             dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
+             max_idx = dates.index(max(dates))
+
+             with open(os.path.join(confighome, savegames[max_idx]), 'r') as file:
+                  config['savegame'] = yaml.safe_load(file)
+
+        else:     
+            config['savegame'] = {}
+
         return config
         
     else:
@@ -97,19 +138,11 @@ def save_config(config):
          config['savegame'] = ''
 
     savegame = config.pop('savegame')
-
-    # running on windows
-    if 'APPDATA' in os.environ:
-        confighome = os.environ['APPDATA']
-    # running on unix supporting XDG CONFIG
-    elif 'XDG_CONFIG_HOME' in os.environ:
-        confighome = os.environ['XDG_CONFIG_HOME']
-    # just put it in home
-    else:
-        confighome = os.path.join(os.environ['HOME'], '.config')
+    confighome = get_config_home()
     
-    configfile = os.path.join(confighome, 'vigilant', 'config.yaml')
-    savefile = os.path.join(confighome, 'vigilant', f"{str(datetime.datetime.now()).replace(' ', '_')}.slay")
+    configfile = os.path.join(confighome, 'config.yaml')
+    new_savefile = os.path.join(confighome, f"{str(datetime.datetime.now()).replace(' ', '_')}.slay")
+    savefile = savegame['savefile'] if 'savefile' in savegame else new_savefile
 
     with open(configfile, 'w') as file:
         yaml.dump(config, file)
@@ -117,8 +150,10 @@ def save_config(config):
     with open(savefile, 'w') as file:
         yaml.dump(savegame, file)
 
+    if savefile != new_savefile: os.replace(savefile, new_savefile)
+
     print('saved config to file: ', configfile)
-    print('saved savegame to file: ', savefile)
+    print('saved savegame to file: ', new_savefile)
 
 
 def check_update(current_version):
@@ -131,23 +166,3 @@ def check_update(current_version):
          return False
     return response["name"] != current_version
          
-
-def get_savegames():
-     
-    savegames = []
-
-    # running on windows
-    if 'APPDATA' in os.environ:
-        confighome = os.environ['APPDATA']
-    # running on unix supporting XDG CONFIG
-    elif 'XDG_CONFIG_HOME' in os.environ:
-        confighome = os.environ['XDG_CONFIG_HOME']
-    # just put it in home
-    else:
-        confighome = os.path.join(os.environ['HOME'], '.config', 'vigilant')
-
-    for file in os.listdir(confighome):
-        if file.endswith(".slay"):
-            savegames.append(file)
-        
-    return savegames

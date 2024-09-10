@@ -65,13 +65,14 @@ class ElevatorScene(Scene):
         super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.id = 1
         self.elevator_fixed = False
+        self.dev = dev
         
         
         # sprites
         elevator_door = StripAnimate('scenes/elevator/elevator_doors.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
         yoyo = StripAnimate('sprites/characters/yoyo/yoyo_sleep.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor)
-        bottles = StripAnimate('scenes/elevator/bottles.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (981, 687))
-        rohrzange = StripAnimate('scenes/elevator/rohrzange.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (1081, 687))
+        bottles = StripAnimate('scenes/elevator/bottles.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (981* ((self.scale_factor) / 6), 687 * ((self.scale_factor) / 6)))
+        rohrzange = StripAnimate('scenes/elevator/rohrzange.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (1081 * ((self.scale_factor) / 6), 687 * ((self.scale_factor) / 6)))
         
         #clickables
         elevator_door_clickable = ElevatorDoor(pg.Rect(((1180, 420, 50, 55))), self, sound_lst = [path('sounds', 'characters', 'dr', 'fahrstuhl_ausser_betrieb.ogg')])
@@ -84,8 +85,6 @@ class ElevatorScene(Scene):
         yoyo_snoring = pg.mixer.Sound(path('sounds', 'characters', 'yoyo', 'snoring.ogg'))
         yoyo_snoring.set_volume(0.3)
 
-        self.player_spawn = (1737 - (int((self.player.current_animation.img_height / 2 ) * self.player.current_animation.scale_factor)), 870 - (int((self.player.current_animation.img_width / 1.5 ) * self.player.current_animation.scale_factor)))
-        self.player_spawn = (1737 * ((self.scale_factor - 1) / 6), 870 * ((self.scale_factor - 1) / 6))
 
         self.bg_lst = {'elevator_inside': 'scenes/elevator/elevator_inside.png', 'elevator_door': elevator_door, 'elevator_band': 'scenes/elevator/band.png', 
                         'elevator_bg': 'scenes/elevator/elevator_bg.png', 'yoyo': yoyo, 'bottles': bottles, 

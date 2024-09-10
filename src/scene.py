@@ -14,25 +14,32 @@ class SceneHandler():
         self.player.collision_lst = self.scene.collision_lst
         self.scene_idx = 3
         self.overlay = overlay
+        self.pos = (0,0)
 
-    def change_scene(self, scene_idx):
+    def change_scene(self, event_response):
+
+        scene_idx, pos = event_response
         
         # TODO: draw transition between scene change here before chaning actually
 
         # real scene index, save in case we come back after moving
         if scene_idx >= 0:
             self.scene_idx = scene_idx
+            self.pos = pos
 
         # we stopped moving to destination, ready for next scnene
-        #if not self.player.moving:
-        if True:
-            print('Changing to scene: ', self.scene_idx)
+        if not self.player.moving or self.scene.dev:
+        #if True:
+            print('Changing to scene: ', self.scene_idx, ' spawn: ', self.pos)
             [sound.stop() for sound in self.scene.sound_lst]
             self.scene = self.scene_lst[self.scene_idx]
-            self.player.rect[0] = self.scene.player_spawn[0]
-            self.player.rect[1] = self.scene.player_spawn[1]
-            self.player.destination_pos = self.scene.player_spawn
+            self.player.rect[0] = self.pos[0]
+            self.player.rect[1] = self.pos[1]
+            self.player.destination_pos = self.pos
             self.player.collision_lst = self.scene.collision_lst
+            self.player.scene = self.scene
+            self.overlay.hide = True
+
             
             for sound in self.scene.sound_lst: 
                 sound.stop()
@@ -46,8 +53,8 @@ class SceneHandler():
     def handle_event(self, event):
         event_response = None
 
-        if not self.overlay.hide: 
-            self.overlay.handle_event(event)
+        if not self.overlay.hide:
+            event_response = self.overlay.handle_event(event)
         else:
             event_response = self.scene.handle_event(event)
 
@@ -66,6 +73,7 @@ class SceneHandler():
                    # p2.append(mpos[1])
 
         if event_response is not None and event_response != 42:
+            print(event_response)
             self.change_scene(event_response)
     
     def draw_bg(self, surface):
@@ -173,7 +181,7 @@ class Scene():
         # come back from waiting on moving player to scene change
         if event.type == pg.USEREVENT + 1:
             # trigger scene change in scene handler onto last scene index
-            return -1
+            return (-1, (0,0))
         
         elif event.type == pg.USEREVENT + 2:
             # i forgot what this does but I think it retriggers a clickable that we walk to, maybe replace that with the new move_to() function feature
@@ -194,6 +202,10 @@ class Scene():
                 self.player.current_animation = self.player.animation_lst[2]
                 self.player.current_animation.rect = self.player.rect
                 self.player.talking = True
+    
+    
+    #def save(self):
+        
 
 
 class Clickable():
@@ -208,13 +220,14 @@ class Clickable():
 
 
 class ChangeScene(Clickable):
-    def __init__(self, rect, next_scene_idx, animation=None, hover_cursor = 0):
+    def __init__(self, rect, next_scene_idx, animation=None, hover_cursor = 0, pos = (0,0)):
         super().__init__(rect, animation, hover_cursor)
         self.next_scene_idx = next_scene_idx
+        self.pos = pos
 
     def on_click(self):
         print('change scene triggered')
-        return self.next_scene_idx
+        return [self.next_scene_idx, self.pos]
     
 
 class Commentable(Clickable):

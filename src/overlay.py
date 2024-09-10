@@ -1,19 +1,9 @@
-from src.scene import Scene, Clickable, Btn
+from src.scene import Scene, Clickable, Btn, ChangeScene
 from src.animate import StripAnimate
 from src.text import Text
 import pygame as pg
-from lib.helper import path, save_config
+from lib.helper import path
 
-class Menu(Clickable):
-    def __init__(self, rect, player, animation, sound = None, hover_cursor = 0):
-        super().__init__(rect, animation, hover_cursor, sound)
-        self.player = player
-        self.sound = sound
-
-    def on_click(self):
-        self.animation.pause = False
-        sound = pg.mixer.Sound(path(self.sound))
-        sound.play()
         
 
 class InventorySlot(Clickable):
@@ -62,9 +52,11 @@ class Overlay(Scene):
         self.fg_lst = {}
 
 
-        menu = Menu(pg.Rect((1549, 925, 318, 118)), self.player, menu_btn, sound = path('sounds', 'button_click.ogg'))
+        #menu = Btn(pg.Rect((1549, 925, 318, 118)), sound = path('sounds', 'button_click.ogg'), animation = menu_btn, scene = self, id = 'menu_btn', fct = lambda: (3,(0,0)))
+        #menu = Btn(pg.Rect((1549, 925, 318, 118)), sound = path('sounds', 'button_click.ogg'), animation = menu_btn, scene = self, id = 'menu_btn', fct = lambda: (3,(0,0)))
+        menu = ChangeScene(pg.Rect((1549, 925, 318, 118)), 3, hover_cursor = 0, pos = (0, 0))
         save_btn_cb = Btn(pg.Rect((60, 909, 340, 135)), sound = path('sounds', 'button_click.ogg'), animation = save_btn, scene = self, id = 'save_btn', fct = self.player.save)
-        self.clickable_lst = {'menu': menu, 'save_btn': save_btn_cb}
+        self.clickable_lst = {'menu_btn': menu, 'save_btn': save_btn_cb}
         self.clickable_lst.update(self.inventory_clickable_rects_lst)
 
 

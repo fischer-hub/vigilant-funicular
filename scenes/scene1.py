@@ -47,11 +47,11 @@ class GreenSlot(Clickable):
         super().__init__(rect, animation, hover_cursor, sound_lst)
         self.player = player
         self.scene = scene
-        self.red = False
+        self.player.config['savegame']['scene1'] = {'red': False}
     
     def turn_red(self):
         self.player.crouch()
-        self.red = True
+        self.player.config['savegame']['scene1'].update({'red': True})
         self.scene.bg_lst.pop('green_slot')
         grab_sound = pg.mixer.Sound(path(self.sound_lst[2]))
         grab_sound.play(maxtime = 1000)
@@ -63,7 +63,7 @@ class GreenSlot(Clickable):
         self.player.inventory.append('ATPContainerFilled')
 
     def on_click(self):
-        if not self.red:
+        if not self.player.config['savegame']['scene1']['red']:
             self.player.talk(self.sound_lst[0])
             self.player.move_to(pg.mouse.get_pos(), self.turn_red)
         else:
@@ -74,13 +74,15 @@ class Scene1(Scene):
     def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
         super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.id = 0
+        self.player.scene = self
+        self.dev = dev
 
         mid_window = StripAnimate('sprites/bg1_mid_window.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         bird = StripAnimate('sprites/bird.png', img_width = 320, frame_rate = 14, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         pipe = StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
 
-        self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png', 
-                       'green_slot': 'sprites/green_slot.png'}
+        self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png'} 
+        if not self.player.config['savegame']['scene1']['red']: self.bg_lst.update({'green_slot': 'sprites/green_slot.png'})
         
         self.fg_lst = {'pipe': pipe, 'fg1': 'sprites/fg1.png', 'bird': bird}
 
@@ -101,7 +103,7 @@ class Scene1(Scene):
         self.fg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.fg_lst.items()}
 
 
-        self.clickable_lst = {'change_scene_left': ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3), 'grey_slot': greyslot, 'green_slot': greenslot,
+        self.clickable_lst = {'change_scene_left': ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3, pos = (1737 * ((self.scale_factor - 1) / 6), 870 * ((self.scale_factor - 1) / 6))), 'grey_slot': greyslot, 'green_slot': greenslot,
                               'red_slot': redslot, 'mid_window': midwindow, 'green_button1': greenbutton1,
                               'green_button2': greenbutton2, 'green_button3': greenbutton3, 'red_button1': redbutton1,
                               'red_button2': redbutton2, 'red_button3': redbutton3, 'grey_button': greybutton,
