@@ -149,6 +149,7 @@ class Player():
         pg.time.set_timer(pg.USEREVENT + 4, 1000)
 
     def save(self):
+        self.config['scale_factor'] = self.current_animation.scale_factor
         self.config['savegame'].update({'inventory': self.inventory})
         self.config['savegame'].update({'scene': self.scene.id})
         self.config['savegame'].update({'pos1': self.current_animation.rect[0]})

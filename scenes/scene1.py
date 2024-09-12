@@ -81,8 +81,13 @@ class Scene1(Scene):
         bird = StripAnimate('sprites/bird.png', img_width = 320, frame_rate = 14, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         pipe = StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
 
-        self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png'} 
-        if not self.player.config['savegame']['scene1']['red']: self.bg_lst.update({'green_slot': 'sprites/green_slot.png'})
+        self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png'}
+
+        # this is so bad pls change this omg (i probably won't), fix the savegame loading to get a default one like the config
+        try:
+            if not self.player.config['savegame']['scene1']['red']: self.bg_lst.update({'green_slot': 'sprites/green_slot.png'})
+        except KeyError:
+            pass
         
         self.fg_lst = {'pipe': pipe, 'fg1': 'sprites/fg1.png', 'bird': bird}
 

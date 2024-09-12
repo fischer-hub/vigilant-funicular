@@ -85,50 +85,9 @@ def load_savegame(savegame):
     with open(os.path.join(confighome, savegame), 'r') as file:
         save_dict = yaml.safe_load(file)
     
+    print("Loaded savefile: ", os.path.join(confighome, savegame))
     save_dict['savefile'] = os.path.join(confighome, savegame)
     return save_dict
-
-
-def load_config():
-     
-    confighome = get_config_home()
-    
-    configfile = os.path.join(confighome, 'config.yaml')
-    
-    if not configfile:
-         configfile = os.path.join('lib', 'config.yaml')
-
-    if os.path.isfile(configfile):
-        with open(configfile, 'r') as file:
-            config = yaml.safe_load(file)
-        
-        if not config:
-             print("Found config file but the file is empty: ", configfile)
-             config = {'no_config': True}
-        else:
-             # select latest save for now
-             print("Loaded config file: ", configfile)
-             config['no_config'] = False
-
-        savegames = get_savegames()
-        
-        if savegames:
-             dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
-             max_idx = dates.index(max(dates))
-
-             with open(os.path.join(confighome, savegames[max_idx]), 'r') as file:
-                  config['savegame'] = yaml.safe_load(file)
-
-        else:     
-            config['savegame'] = {}
-
-        return config
-        
-    else:
-        os.makedirs(os.path.dirname(configfile), exist_ok=True)
-        with open(configfile, 'w'): pass
-
-        return {'no_config': True}
 
 
 def save_config(config):
@@ -156,6 +115,65 @@ def save_config(config):
 
     print('saved config to file: ', configfile)
     print('saved savegame to file: ', new_savefile)
+
+
+def init_save_obj():
+     savegame = {'scene1': {'red': False}}
+     print('Initializing savegame object.')
+     return savegame
+
+
+def load_config():
+     
+    confighome = get_config_home()
+    
+    configfile = os.path.join(confighome, 'config.yaml')
+    
+
+    if os.path.isfile(configfile):
+        with open(configfile, 'r') as file:
+            config = yaml.safe_load(file)
+        
+        if not config:
+             print("Found config file but the file is empty: ", configfile)
+             config = {'no_config': True}
+        else:
+             # select latest save for now
+             print("Loaded config file: ", configfile)
+             config['no_config'] = False
+
+        savegames = get_savegames()
+        
+        if savegames:
+            dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
+            max_idx = dates.index(max(dates))
+
+            if os.path.isfile(os.path.join(confighome, savegames[max_idx])):
+                with open(os.path.join(confighome, savegames[max_idx]), 'r') as file:
+                    config['savegame'] = yaml.safe_load(file)
+                print('Loaded savefile: ', os.path.join(confighome, savegames[max_idx]))
+            else:
+                print('Savefile not found: ', os.path.join(confighome, savegames[max_idx]))
+                config['savegame'] = init_save_obj()
+
+        else:     
+            print('No savefiles found in: ', confighome)
+            config['savegame'] = init_save_obj()
+
+
+        return config
+        
+    else:
+        configfile = os.path.join('lib', 'config.yaml')
+        print('Configfile not found, loading default from: ', configfile)
+        
+        with open(configfile, 'r') as file:
+            config = yaml.safe_load(file)
+        
+        save_config(config)
+        config['no_config'] = True
+        return config
+
 
 
 def check_update(current_version):
