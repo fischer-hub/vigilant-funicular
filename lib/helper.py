@@ -94,6 +94,9 @@ def load_config():
     confighome = get_config_home()
     
     configfile = os.path.join(confighome, 'config.yaml')
+    
+    if not configfile:
+         configfile = os.path.join('lib', 'config.yaml')
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
