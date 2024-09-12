@@ -91,7 +91,6 @@ def load_savegame(savegame):
 
 def load_config():
      
-
     confighome = get_config_home()
     
     configfile = os.path.join(confighome, 'config.yaml')
@@ -126,7 +125,7 @@ def load_config():
         os.makedirs(os.path.dirname(configfile), exist_ok=True)
         with open(configfile, 'w'): pass
 
-        return {}
+        return {'no_config': True}
 
 
 def save_config(config):
