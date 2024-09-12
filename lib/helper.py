@@ -142,26 +142,6 @@ def load_config():
              print("Loaded config file: ", configfile)
              config['no_config'] = False
 
-        savegames = get_savegames()
-        
-        if savegames:
-            dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
-            max_idx = dates.index(max(dates))
-
-            if os.path.isfile(os.path.join(confighome, savegames[max_idx])):
-                with open(os.path.join(confighome, savegames[max_idx]), 'r') as file:
-                    config['savegame'] = yaml.safe_load(file)
-                print('Loaded savefile: ', os.path.join(confighome, savegames[max_idx]))
-            else:
-                print('Savefile not found: ', os.path.join(confighome, savegames[max_idx]))
-                config['savegame'] = init_save_obj()
-
-        else:     
-            print('No savefiles found in: ', confighome)
-            config['savegame'] = init_save_obj()
-
-
-        return config
         
     else:
         configfile = os.path.join('lib', 'config.yaml')
@@ -170,10 +150,29 @@ def load_config():
         with open(configfile, 'r') as file:
             config = yaml.safe_load(file)
         
-        save_config(config)
+        #save_config(config)
         config['no_config'] = True
-        return config
 
+    savegames = get_savegames()
+    
+    if savegames:
+        dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
+        max_idx = dates.index(max(dates))
+
+        if os.path.isfile(os.path.join(confighome, savegames[max_idx])):
+            with open(os.path.join(confighome, savegames[max_idx]), 'r') as file:
+                config['savegame'] = yaml.safe_load(file)
+            print('Loaded savefile: ', os.path.join(confighome, savegames[max_idx]))
+        else:
+            print('Savefile not found: ', os.path.join(confighome, savegames[max_idx]))
+            config['savegame'] = init_save_obj()
+
+    else:     
+        print('No savefiles found in: ', confighome)
+        config['savegame'] = init_save_obj()
+
+    return config
+    
 
 
 def check_update(current_version):
