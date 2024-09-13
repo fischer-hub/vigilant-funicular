@@ -130,10 +130,10 @@ def load_config():
     
     configfile = os.path.join(confighome, 'config.yaml')
     
-    stdout = sys.stdout
+    #stdout = sys.stdout
 
-    with open(os.path.join(confighome, 'log.txt'), 'w') as stdout:
-        print('Redirecting stdout to: ', os.path.join(confighome, 'log.txt'))
+    with open(os.path.join(confighome, 'log.txt'), 'w') as sys.stdout:
+        print('Redirecting stdout to: ')#, os.path.join(confighome, 'log.txt'))
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
