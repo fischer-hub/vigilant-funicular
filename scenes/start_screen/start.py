@@ -3,6 +3,7 @@ from src.text import Text
 import pygame as pg
 from lib.helper import path, save_config, check_update
 from src.animate import StripAnimate
+from datetime import datetime
 import os, sys
 
 
@@ -70,7 +71,12 @@ class StartScreen(Scene):
         super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.id = 3
         self.config = config
-        self.update_available = check_update(self.config['version'])
+
+        # only check for update once a day to not exceed github api limit (also this is really slow)
+        if 'update_checked' in self.config and self.config['update_checked'] != datetime.today().strftime('%Y-%m-%d'):
+            self.update_available = check_update(self.config['version'])
+            self.config['update_checked'] = datetime.today().strftime('%Y-%m-%d')
+            save_config(self.config)
 
 
         self.player_spawn = (-100, -100)
