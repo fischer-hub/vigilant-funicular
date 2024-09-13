@@ -73,10 +73,14 @@ class StartScreen(Scene):
         self.config = config
 
         # only check for update once a day to not exceed github api limit (also this is really slow)
-        if 'update_checked' in self.config and self.config['update_checked'] != datetime.today().strftime('%Y-%m-%d'):
+        if 'update_checked' not in self.config:
+            self.config['update_checked'] = 'init'
+
+        if self.config['update_checked'] != datetime.today().strftime('%Y-%m-%d'):
             self.update_available = check_update(self.config['version'])
             self.config['update_checked'] = datetime.today().strftime('%Y-%m-%d')
             save_config(self.config)
+            
 
 
         self.player_spawn = (-100, -100)
