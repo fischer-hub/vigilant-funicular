@@ -135,6 +135,9 @@ def load_config():
     with open(os.path.join(confighome, 'log.txt'), 'w') as sys.stdout:
         print('Redirecting stdout to: ')#, os.path.join(confighome, 'log.txt'))
 
+    with open(os.path.join(confighome, 'log_err.txt'), 'w') as sys.stderr:
+        print('Redirecting stderr to: ')#, os.path.join(confighome, 'log.txt'))
+
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
             config = yaml.safe_load(file)
