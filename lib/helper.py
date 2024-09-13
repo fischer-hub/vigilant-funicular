@@ -137,7 +137,8 @@ def load_config():
 
     #with open(os.path.join(confighome, 'log_err.txt'), 'w') as sys.stderr:
     #    print('Redirecting stderr to: ')#, os.path.join(confighome, 'log.txt'))
-    sys.stderr = open(os.path.join(confighome, 'log.txt'), 'w')
+    sys.stderr = open(os.path.join(confighome, 'log_err.txt'), 'w')
+    sys.stdout = open(os.path.join(confighome, 'log_out.txt'), 'w')
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
