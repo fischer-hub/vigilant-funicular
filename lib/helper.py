@@ -124,11 +124,16 @@ def init_save_obj():
 
 
 def load_config():
+
      
     confighome = get_config_home()
     
     configfile = os.path.join(confighome, 'config.yaml')
     
+    stdout = sys.stdout
+
+    with open(os.path.join(confighome, 'log.txt'), 'w') as stdout:
+        print('Redirecting stdout to: ', os.path.join(confighome, 'log.txt'))
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
