@@ -102,7 +102,7 @@ def save_config(config):
     confighome = get_config_home()
     
     configfile = os.path.join(confighome, 'config.yaml')
-    new_savefile = os.path.join(confighome, f"{str(datetime.datetime.now()).replace(' ', '_')}.slay")
+    new_savefile = os.path.join(confighome, f"{str(datetime.datetime.now()).replace(' ', '_').replace(':', '_')}.slay")
     savefile = savegame['savefile'] if 'savefile' in savegame else new_savefile
 
     with open(configfile, 'w') as file:
