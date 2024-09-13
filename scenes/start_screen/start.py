@@ -79,7 +79,10 @@ class StartScreen(Scene):
         if self.config['update_checked'] != datetime.today().strftime('%Y-%m-%d'):
             self.config['update_available'] = check_update(self.config['version'])
             self.config['update_checked'] = datetime.today().strftime('%Y-%m-%d')
-            save_config(self.config)            
+            save_config(self.config)        
+
+        if 'update_available' not in self.config:
+            self.config['update_available'] = False    
 
         self.player_spawn = (-100, -100)
         
