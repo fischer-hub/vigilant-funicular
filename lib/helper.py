@@ -180,7 +180,7 @@ def check_update(current_version):
     try:
         response = requests.get("https://api.github.com/repos/fischer-hub/vigilant-funicular/releases/latest").json()
         print(response["name"], current_version)
-    except e:
+    except Exception as e:
          print('Failed to check remote version, probs connection issue: ', e)
          return False
     return response["name"] != current_version
