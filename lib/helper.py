@@ -157,7 +157,7 @@ def load_config():
         configfile = os.path.join('lib', 'config.yaml')
         print('Configfile not found, loading default from: ', configfile)
         
-        with open(configfile, 'r') as file:
+        with open(path(configfile), 'r') as file:
             config = yaml.safe_load(file)
         
         #save_config(config)
