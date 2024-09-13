@@ -77,11 +77,9 @@ class StartScreen(Scene):
             self.config['update_checked'] = 'init'
 
         if self.config['update_checked'] != datetime.today().strftime('%Y-%m-%d'):
-            self.update_available = check_update(self.config['version'])
+            self.config['update_available'] = check_update(self.config['version'])
             self.config['update_checked'] = datetime.today().strftime('%Y-%m-%d')
-            save_config(self.config)
-            
-
+            save_config(self.config)            
 
         self.player_spawn = (-100, -100)
         
@@ -89,12 +87,12 @@ class StartScreen(Scene):
         # sprites
         bg = StripAnimate('scenes/start_screen/bg.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         start_button = StripAnimate('scenes/start_screen/start_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
-        update_button = StripAnimate('scenes/start_screen/update_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0 if self.update_available else 1, pause = True, once = True)
+        update_button = StripAnimate('scenes/start_screen/update_button.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0 if self.config['update_available'] else 1, pause = True, once = True)
         new_game = StripAnimate('scenes/start_screen/new_game.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         size_meter = StripAnimate('scenes/start_screen/size_meter.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = scale_factor, pause = True, once = True)
         caution_msg = StripAnimate('scenes/start_screen/caution_message.png', img_width = 320, frame_rate = 3, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
 
-        version_txt = Text(f"version: {self.config['version']}{', dev' if dev else ''}{', update available!' if self.update_available else ''}", pg.Rect(0,-20,0,0), 4, (255, 255, 255), scale_factor)
+        version_txt = Text(f"version: {self.config['version']}{', dev' if dev else ''}{', update available!' if self.config['update_available'] else ''}", pg.Rect(0,-20,0,0), 4, (255, 255, 255), scale_factor)
 
         # clickables
         start_button_clickable = Btn(pg.Rect(460, 120, 1050, 220), sound = path('sounds', 'button_click.ogg'), animation = start_button, scene = self, id = 'start_button', fct = lambda: (4,(0,0)))
@@ -112,7 +110,7 @@ class StartScreen(Scene):
         
         self.clickable_lst.update({'start_button': start_button_clickable, 'new_game': new_game_button_clickable})
 
-        if self.update_available: self.clickable_lst.update({'update_button': update_button_clickable})
+        if self.config['update_available']: self.clickable_lst.update({'update_button': update_button_clickable})
 
 
         if self.config['no_config']:
