@@ -98,11 +98,11 @@ def save_config(config):
     if 'savegame' not in config: 
          config['savegame'] = ''
 
-    savegame = config.pop('savegame')
+    savegame = config['savegame']
     confighome = get_config_home()
     
     configfile = os.path.join(confighome, 'config.yaml')
-    new_savefile = os.path.join(confighome, f"{str(datetime.datetime.now()).replace(' ', '_').replace(':', '_')}.slay")
+    new_savefile = os.path.join(confighome, f"{str(datetime.datetime.now()).replace(' ', '_').replace(':', 'colon')}.slay")
     savefile = savegame['savefile'] if 'savefile' in savegame else new_savefile
 
     with open(configfile, 'w') as file:
@@ -137,8 +137,9 @@ def load_config():
 
     #with open(os.path.join(confighome, 'log_err.txt'), 'w') as sys.stderr:
     #    print('Redirecting stderr to: ')#, os.path.join(confighome, 'log.txt'))
-    sys.stderr = open(os.path.join(confighome, 'log_err.txt'), 'w')
-    sys.stdout = open(os.path.join(confighome, 'log_out.txt'), 'w')
+    if len(sys.argv) > 1 and not 'log' in sys.argv:
+        sys.stderr = open(os.path.join(confighome, 'log_err.txt'), 'w')
+        sys.stdout = open(os.path.join(confighome, 'log_out.txt'), 'w')
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
@@ -166,7 +167,7 @@ def load_config():
     savegames = get_savegames()
     
     if savegames:
-        dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ')) for file in savegames ]
+        dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ').replace('colon', ':')) for file in savegames ]
         max_idx = dates.index(max(dates))
 
         if os.path.isfile(os.path.join(confighome, savegames[max_idx])):

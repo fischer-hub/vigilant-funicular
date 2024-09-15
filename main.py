@@ -22,7 +22,7 @@ def main():
     config['version'] = 'v0.0.1-alpha'
 
     # I think this doesnt even work..    
-    if len(sys.argv) > 1:
+    if 'dev' in sys.argv:
         config['dev'] = dev = True 
         print('Running in dev mode')
     else:
@@ -67,11 +67,11 @@ def main():
 
     # init scene objects
     start_screen = StartScreen(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev, config = config)
+    load_game = LoadGame(doctor, cursor, scale_factor = scale_factor, dev = dev)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
     bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, collision_file = 'scenes/bathroom/collision.pickle', dev = dev)
     overlay = Overlay(doctor, cursor, scale_factor = scale_factor, dev = dev)
-    load_game = LoadGame(doctor, cursor, scale_factor = scale_factor, dev = dev)
 
     # init scene handler
     scene_handler = sc.SceneHandler([scene1, elevator_scene, bathroom, 
