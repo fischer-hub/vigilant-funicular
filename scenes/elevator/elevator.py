@@ -73,13 +73,17 @@ class ElevatorScene(Scene):
         yoyo = StripAnimate('sprites/characters/yoyo/yoyo_sleep.png', img_width = 320, frame_rate = 1, scale_factor = scale_factor)
         bottles = StripAnimate('scenes/elevator/bottles.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (981* ((self.scale_factor) / 6), 687 * ((self.scale_factor) / 6)))
         rohrzange = StripAnimate('scenes/elevator/rohrzange.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (1081 * ((self.scale_factor) / 6), 687 * ((self.scale_factor) / 6)))
-        
+        pflanze = StripAnimate('scenes/elevator/elevator_tree.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
+
         #clickables
         elevator_door_clickable = ElevatorDoor(pg.Rect(((1180, 420, 50, 55))), self, sound_lst = [path('sounds', 'characters', 'dr', 'fahrstuhl_ausser_betrieb.ogg')])
         bottles_clickable = Bottles(pg.Rect(((981, 687, 20 * self.scale_factor, 20 * self.scale_factor))), self.player, scene = self, sound_lst = [path('sounds', 'characters', 'dr', 'grab.ogg'), path('sounds', 'characters', 'dr', 'eine_leere_bierflasche.ogg')], animation = bottles)
         yoyo_sleeping_clickable = YoyoSleeping(pg.Rect(1292, 540, 150, 250), self.player, sound_lst = path('sounds', 'characters', 'dr', 'der_handwerker_schlaeft_gerade.ogg'))
         newton_picture = Commentable(pg.Rect(190, 150, 280, 180), self.player, sound_lst = path('sounds', 'characters', 'dr', 'ein_bild_von_isaac_newton.ogg'))
         rohrzange_clickable = Collectable(pg.Rect(1131, 717, 20* self.scale_factor, 20*self.scale_factor), self.player, sound_lst = ['sounds/characters/dr/eine_rohrzange.ogg'], scene = self, list_name = 'rohrzange', item_id_lst = ['Rohrzange'])
+        pflanze_clb_top = Commentable(pg.Rect(1450, 115, 300, 105), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'))
+        pflanze_clb_bottom = Commentable(pg.Rect(1600, 206, 220, 555), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'))
+        
 
         # sounds
         yoyo_snoring = pg.mixer.Sound(path('sounds', 'characters', 'yoyo', 'snoring.ogg'))
@@ -88,7 +92,7 @@ class ElevatorScene(Scene):
 
         self.bg_lst = {'elevator_inside': 'scenes/elevator/elevator_inside.png', 'elevator_door': elevator_door, 'elevator_band': 'scenes/elevator/band.png', 
                         'elevator_bg': 'scenes/elevator/elevator_bg.png', 'yoyo': yoyo, 'bottles': bottles, 
-                        'rohrzange': rohrzange}
+                        'rohrzange': rohrzange, 'plant': pflanze}
         self.fg_lst = {}
         
         self.bg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.bg_lst.items()}
@@ -97,6 +101,7 @@ class ElevatorScene(Scene):
         
         self.clickable_lst = {'right_change_scene': ChangeScene(pg.Rect(1849, 128, 100, 900), 0, hover_cursor = 4), 'elevator_door': elevator_door_clickable,
                                'bottles': bottles_clickable, 'yoyo': yoyo_sleeping_clickable, 'newton': newton_picture,
-                               'rohrzange': rohrzange_clickable, 'left_change_scene': ChangeScene(pg.Rect(0, 128, 100, 900), 2, hover_cursor = 3, pos = (1880 * ((self.scale_factor - 1) / 6), 842 * ((self.scale_factor - 1) / 6)))}
+                               'rohrzange': rohrzange_clickable, 'left_change_scene': ChangeScene(pg.Rect(0, 128, 100, 900), 2, hover_cursor = 3, pos = (1880 * ((self.scale_factor - 1) / 6), 842 * ((self.scale_factor - 1) / 6))),
+                               'plant_top': pflanze_clb_top, 'plant_bottom': pflanze_clb_bottom }
 
         self.sound_lst += [yoyo_snoring]

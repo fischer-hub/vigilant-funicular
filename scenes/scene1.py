@@ -1,4 +1,5 @@
 from src.scene import Scene, Clickable, ChangeScene, Commentable
+from src.text import Text
 import pygame as pg
 from lib.helper import path
 from src.animate import StripAnimate
@@ -81,6 +82,9 @@ class Scene1(Scene):
         bird = StripAnimate('sprites/bird.png', img_width = 320, frame_rate = 14, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once = True)
         pipe = StripAnimate('sprites/fg1_pipe.png', frame_rate = 5, scale_factor = scale_factor, img_width = 320)
 
+        inventory_hint = Text(f"press e to open the inventory", pg.Rect(5,-15,0,0), 4, (255, 255, 255), scale_factor)
+
+
         self.bg_lst = {'mid_window': mid_window, 'red_slot': 'sprites/red_slot2.png',  'bg1': 'sprites/bg1.png'}
 
         # this is so bad pls change this omg (i probably won't), fix the savegame loading to get a default one like the config
@@ -89,7 +93,7 @@ class Scene1(Scene):
         except KeyError:
             pass
         
-        self.fg_lst = {'pipe': pipe, 'fg1': 'sprites/fg1.png', 'bird': bird}
+        self.fg_lst = {'pipe': pipe, 'fg1': 'sprites/fg1.png', 'bird': bird, 'inventory_hint': inventory_hint}
 
         redslot = GreySlot(pg.Rect((1500, 625, 130, 52)), self.player, path('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'))
         greenslot = GreenSlot(pg.Rect((908, 615, 110, 42)), self.player, [path('sounds', 'characters', 'dr', 'das_koennte_spaeter.ogg'), path('sounds', 'characters', 'dr', 'das_sieht_nicht_richtig.ogg'), path('sounds', 'characters', 'dr', 'grab.ogg')], self)
@@ -104,8 +108,10 @@ class Scene1(Scene):
         midwindow = MidWindow(pg.Rect((1180, 155, 215, 160)), animation = self.bg_lst['mid_window'], sound_lst = path('sounds', 'water.ogg'))
         bird = Bird(pg.Rect((1650, 0, 250, 100)), self.fg_lst['bird'], sound_lst = path('sounds', 'bird_flap.ogg'))
 
-        self.bg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.bg_lst.items()}
-        self.fg_lst = {key: (layer if type(layer) is StripAnimate else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.fg_lst.items()}
+
+
+        self.bg_lst = {key: (layer if type(layer) is StripAnimate or type(layer) is Text else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.bg_lst.items()}
+        self.fg_lst = {key: (layer if type(layer) is StripAnimate or type(layer) is Text else pg.transform.scale_by(pg.image.load(path(layer)).convert_alpha(), scale_factor)) for key, layer in self.fg_lst.items()}
 
 
         self.clickable_lst = {'change_scene_left': ChangeScene(pg.Rect(40, 35, 250, 400), 1, hover_cursor = 3, pos = (1737 * ((self.scale_factor - 1) / 6), 870 * ((self.scale_factor - 1) / 6))), 'grey_slot': greyslot, 'green_slot': greenslot,
