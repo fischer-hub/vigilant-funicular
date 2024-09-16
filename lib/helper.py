@@ -193,6 +193,7 @@ def load_config():
 def check_update(current_version):
     '''Returns true when the latest remote version is different from the current one. Else returns false, also returns false when remote is not reachable.'''
     try:
+        print('Checking repository for updates..')
         response = requests.get("https://api.github.com/repos/fischer-hub/vigilant-funicular/releases/latest").json()
         print(response["name"], current_version)
     except Exception as e:
