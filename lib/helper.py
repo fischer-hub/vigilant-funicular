@@ -73,7 +73,11 @@ def get_savegames():
 
     for file in os.listdir(confighome):
         if file.endswith(".slay"):
-            savegames.append(file)
+            if ' ' in file:
+                print('Invalid filename, contains whitespace in datetime string, deleting.')
+                os.remove(file)
+            else:
+                savegames.append(file)
         
     return savegames
 
@@ -167,7 +171,7 @@ def load_config():
     savegames = get_savegames()
     
     if savegames:
-        dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',' ').replace('colon', ':')) for file in savegames ]
+        dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',':').replace('colon', ':')) for file in savegames ]
         max_idx = dates.index(max(dates))
 
         if os.path.isfile(os.path.join(confighome, savegames[max_idx])):
