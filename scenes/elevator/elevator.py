@@ -3,6 +3,21 @@ from src.animate import StripAnimate
 import pygame as pg
 from lib.helper import path
 
+class Plant(Clickable):
+    def __init__(self, rect, player, animation=None, hover_cursor = 2, sound_lst=None, scene = None):
+        super().__init__(rect, animation, hover_cursor, sound_lst)
+        self.player = player
+        self.sound_lst = sound_lst
+        self.scene = scene
+    
+    def on_click(self):
+        if 'PUBottleFull' in self.player.inventory:
+            self.scene.bg_lst['plant'].pause = False
+            self.player.inventory.pop('PUBottleFull')
+        else:
+            self.player.talk(sound_lst)
+
+        return None
 
 class YoyoSleeping(Clickable):
     def __init__(self, rect, player, animation=None, hover_cursor = 2, sound_lst=None):
@@ -81,8 +96,8 @@ class ElevatorScene(Scene):
         yoyo_sleeping_clickable = YoyoSleeping(pg.Rect(1292, 540, 150, 250), self.player, sound_lst = path('sounds', 'characters', 'dr', 'der_handwerker_schlaeft_gerade.ogg'))
         newton_picture = Commentable(pg.Rect(190, 150, 280, 180), self.player, sound_lst = path('sounds', 'characters', 'dr', 'ein_bild_von_isaac_newton.ogg'))
         rohrzange_clickable = Collectable(pg.Rect(1131, 717, 20* self.scale_factor, 20*self.scale_factor), self.player, sound_lst = ['sounds/characters/dr/eine_rohrzange.ogg'], scene = self, list_name = 'rohrzange', item_id_lst = ['Rohrzange'])
-        pflanze_clb_top = Commentable(pg.Rect(1450, 115, 300, 105), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'))
-        pflanze_clb_bottom = Commentable(pg.Rect(1600, 206, 220, 555), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'))
+        pflanze_clb_top = Plant(pg.Rect(1450, 115, 300, 105), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'), scene = self)
+        pflanze_clb_bottom = Plant(pg.Rect(1600, 206, 220, 555), self.player, sound_lst = path('sounds', 'characters', 'dr', 'gegossen_werden.ogg'), scene = self)
         
 
         # sounds
