@@ -52,12 +52,10 @@ def main():
     doctor_walk = am.StripAnimate('sprites/dr_walk.png', frame_rate = 5, scale_factor = scale_factor)
     doctor_talk = am.StripAnimate('sprites/characters/dr_talk.png', frame_rate = 5, scale_factor = scale_factor)
     doctor_crouch = am.StripAnimate('sprites/characters/dr_crouch.png', frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once =  True)
-
-
-
+    doctor_stretch = am.StripAnimate('sprites/characters/dr_stretch.png', frame_rate = 1, scale_factor = scale_factor, cycles = 1, default_frame = 0, pause = True, once =  True)
 
     # init character (Player) objects
-    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch], step_size = 2, dev = dev, pos = (-100, -100), config = config)
+    doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch, doctor_stretch], step_size = 2, dev = dev, pos = (-100, -100), config = config)
     
     # set background music
     pg.mixer.music.load(util.path('sounds/music/colorful_flowers.mp3'))
@@ -70,7 +68,7 @@ def main():
     load_game = LoadGame(doctor, cursor, scale_factor = scale_factor, dev = dev)
     scene1 = Scene1(doctor, cursor, collision_file = 'scenes/scene1.pickle', scale_factor = scale_factor, dev = dev)
     elevator_scene = ElevatorScene(doctor, cursor, collision_file = 'scenes/elevator/collision.pickle', scale_factor = scale_factor, dev = dev)
-    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, collision_file = 'scenes/bathroom/collision.pickle', dev = dev)
+    bathroom = Bathroom(doctor, cursor, scale_factor = scale_factor, collision_file = 'scenes/bathroom/collision.pickle', dev = dev, config = config)
     overlay = Overlay(doctor, cursor, scale_factor = scale_factor, dev = dev)
 
     # init scene handler
@@ -128,7 +126,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), ((1600, 206, 220, 555)))
+        #pg.draw.rect(screen, (255,255,255), (((1550, 0, 200, 390))))
         
         cursor.draw(screen)
 

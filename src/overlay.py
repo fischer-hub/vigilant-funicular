@@ -23,6 +23,7 @@ class InventorySlot(Clickable):
 
 class Overlay(Scene):
     def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
+        self.id = 'overlay'
         super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.hide = True
         self.scale_factor = scale_factor

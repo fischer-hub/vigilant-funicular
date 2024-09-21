@@ -9,10 +9,10 @@ class SceneHandler():
     def __init__(self, scene_lst, player, overlay):
 
         self.scene_lst = scene_lst
-        self.scene = self.scene_lst[3]
+        self.scene_idx = 3
+        self.scene = self.scene_lst[self.scene_idx]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
-        self.scene_idx = 3
         self.overlay = overlay
         self.pos = (0,0)
 
@@ -88,8 +88,8 @@ class SceneHandler():
 
 
 class Scene():
-    def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
-
+    def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False, config = None):
+        self.config = config
         self.show_collision = False
         self.clickable_lst = {}
         self.bg_lst = {}
@@ -122,7 +122,7 @@ class Scene():
                 self.collision_lst = [ int(value * (self.scale_factor / 6)) for value in self.collision_lst ]
 
         elif not collision_file:
-            print('No collision file defined for this scene, initializing collision values to upper screen bound 0.')
+            print(f"No collision file defined for scene {self.id}, initializing collision values to upper screen bound 0.")
             self.collision_lst = [0] * 8000
         else:
             print('Running in dev mode, set collision values to 0.')
@@ -288,3 +288,21 @@ class Btn(Clickable):
             self.clicked = False
             if self.fct:
                 return self.fct()
+            
+
+class ChecksInventory(Clickable):
+    def __init__(self, rect, player, animation=None, hover_cursor = 2, sound_lst=None, scene = None, item = ''):
+        super().__init__(rect, animation, hover_cursor, sound_lst)
+        self.player = player
+        self.sound_lst = sound_lst
+        self.scene = scene
+        self.item = item
+    
+    def on_click(self):
+        if self.item in self.player.inventory:
+            self.scene.bg_lst['plant'].pause = False
+            self.player.inventory.pop('PUBottleFull')
+        else:
+            self.player.talk(self.sound_lst)
+
+        return None

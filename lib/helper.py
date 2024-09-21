@@ -122,7 +122,8 @@ def save_config(config):
 
 
 def init_save_obj():
-     savegame = {'scene1': {'red': False}}
+     savegame = {'scene1': {'red': False},
+                 'bathroom': {'valve': False}}
      print('Initializing savegame object.')
      return savegame
 

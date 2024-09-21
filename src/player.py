@@ -21,7 +21,7 @@ class Player():
         self.steps_sound = pg.mixer.Sound(path('sounds/characters/dr/steps.ogg'))
         self.talk_sound = None
         self.function_to_exec = None
-        self.inventory = ['ATPContainerFilled']
+        self.inventory = []
         self.config = config
         self.scene = None
 
@@ -142,6 +142,15 @@ class Player():
     def crouch(self):
         self.rect = self.current_animation.rect
         self.current_animation = self.animation_lst[3]
+        self.current_animation.pause = False
+        self.current_animation.rect = self.rect
+        self.destination_pos = (self.rect[0], self.rect[1])
+        # check if we are talking in a few secs when crouch animation is done
+        pg.time.set_timer(pg.USEREVENT + 4, 1000)
+
+    def stretch(self):
+        self.rect = self.current_animation.rect
+        self.current_animation = self.animation_lst[4]
         self.current_animation.pause = False
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])

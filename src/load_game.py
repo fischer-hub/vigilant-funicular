@@ -30,8 +30,8 @@ class InventorySlot(Clickable):
 
 class LoadGame(Scene):
     def __init__(self, player, cursor, collision_file = None, scale_factor = 6, dev = False):
-        super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.id = 4
+        super().__init__(player, cursor, collision_file, scale_factor, dev)
         self.scale_factor = scale_factor
         self.inventory_slot_coord_lst = [(318, 234), (638, 237), (925, 246), (1235, 241), (1542, 250), (329, 467), (646, 474), 
                                          (945, 481), (1240, 482), (1560, 485), (308, 745), (618, 754), (960, 753), (1258, 741), (1579, 744)]

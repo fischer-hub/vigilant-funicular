@@ -15,7 +15,7 @@ class Plant(Clickable):
             self.scene.bg_lst['plant'].pause = False
             self.player.inventory.pop('PUBottleFull')
         else:
-            self.player.talk(sound_lst)
+            self.player.talk(self.sound_lst)
 
         return None
 
