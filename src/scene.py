@@ -9,7 +9,7 @@ class SceneHandler():
     def __init__(self, scene_lst, player, overlay):
 
         self.scene_lst = scene_lst
-        self.scene_idx = 3
+        self.scene_idx = 2
         self.scene = self.scene_lst[self.scene_idx]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
@@ -167,7 +167,7 @@ class Scene():
 
             # do this when consuming /using an item
             #self.player.inventory.remove(self.cursor.item)     
-            self.cursor.item = ''
+            #self.cursor.item = ''
         
         for obj in self.clickable_lst.values():
             scaled_rect = pg.Rect(tuple(int(value * (self.scale_factor / 6)) for value in obj.rect))
@@ -217,7 +217,10 @@ class Clickable():
         self.sound_lst = sound_lst
 
     def on_click(self):
-        print(f"Clickable does not implement own on_click() method. Clicked on object at {self.rect.topleft}")
+        if self.animation.pause:
+            self.animation.pause = False
+        #print(f"Clickable does not implement own on_click() method. Clicked on object at {self.rect.topleft}")
+        return 42
 
 
 class ChangeScene(Clickable):

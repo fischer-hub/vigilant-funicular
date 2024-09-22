@@ -75,7 +75,7 @@ class LoadGame(Scene):
     def draw_fg(self, surface):
         
         render_lst = [Text(f"{savegame.split('_')[0]}", pg.Rect(pos[0], pos[1], 0, 0), 3, (255,255,255), self.scale_factor) for savegame, pos in zip(self.savegame_lst, self.inventory_slot_coord_lst_adjusted)]
-        render_lst += [Text(f"{savegame.split('_')[1].split('.')[0]}", pg.Rect(pos[0], pos[1] + (13*self.scale_factor), 0, 0), 3, (255,255,255), self.scale_factor) for savegame, pos in zip(self.savegame_lst, self.inventory_slot_coord_lst_adjusted)]
+        render_lst += [Text(f"{savegame.split('_')[1].split('.')[0].replace('colon', ':')}", pg.Rect(pos[0], pos[1] + (13*self.scale_factor), 0, 0), 3, (255,255,255), self.scale_factor) for savegame, pos in zip(self.savegame_lst, self.inventory_slot_coord_lst_adjusted)]
 
         for layer in self.fg_lst.values():
             if type(layer) is StripAnimate or type(layer) is Text:
