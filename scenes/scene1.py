@@ -57,11 +57,6 @@ class GreenSlot(Clickable):
         grab_sound = pg.mixer.Sound(path(self.sound_lst[2]))
         grab_sound.play(maxtime = 1000)
         self.player.inventory.append('ATPContainerFilled')
-        self.player.inventory.append('ATPContainerFilled')
-        self.player.inventory.append('ATPContainerFilled')
-        self.player.inventory.append('ATPContainerFilled')
-        self.player.inventory.append('ATPContainerFilled')
-        self.player.inventory.append('ATPContainerFilled')
 
     def on_click(self):
         if not self.player.config['savegame']['scene1']['red']:

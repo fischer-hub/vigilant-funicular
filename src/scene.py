@@ -9,7 +9,7 @@ class SceneHandler():
     def __init__(self, scene_lst, player, overlay):
 
         self.scene_lst = scene_lst
-        self.scene_idx = 2
+        self.scene_idx = 3
         self.scene = self.scene_lst[self.scene_idx]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
@@ -191,7 +191,11 @@ class Scene():
         elif event.type == pg.USEREVENT + 3:
             # trigger end of talking animation
             self.player.rect = self.player.current_animation.rect
-            self.player.current_animation = self.player.animation_lst[0]
+            
+            # only play idle animation if we are not also moving right now
+            if not self.player.moving:
+                self.player.current_animation = self.player.animation_lst[0]
+
             self.player.current_animation.rect = self.player.rect
             self.player.talking = False
             print('talking ends')
