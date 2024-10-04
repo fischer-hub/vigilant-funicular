@@ -24,13 +24,14 @@ class SizeMeter(Clickable):
         # if we are bundled pyinstaller will extend the sys module with the new frozen attribute so this will return true
         if getattr(sys, 'frozen', False):
             print(f"Restarting game {sys.executable} to apply size change..")
-            os.system(sys.executable)
             pg.quit()
+            os.system(sys.executable)
             sys.exit()
 
         else:
-            print(f"Restarting game {sys.executable + ['python'] + sys.argv} to apply size change..")
+            print(f"Restarting game {sys.executable + 'python' + sys.argv[0]} to apply size change..")
             os.execv(sys.executable, ['python'] + sys.argv)
+
     
 
 class Btn(Clickable):
