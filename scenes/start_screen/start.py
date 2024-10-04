@@ -19,6 +19,7 @@ class SizeMeter(Clickable):
         self.scene.fg_lst['size_meter'].index = self.idx
         self.scene.config['scale_factor'] = self.idx
         save_config(self.scene.config)
+        print(f"Restarting game {sys.executable, ['python'] + sys.argv} to apply size change..")
         os.execv(sys.executable, ['python'] + sys.argv)
     
 

@@ -169,7 +169,7 @@ def load_config():
         #save_config(config)
         config['no_config'] = True
 
-    savegames = get_savegames()
+    """    savegames = get_savegames()
     
     if savegames:
         dates = [ datetime.datetime.fromisoformat(file.split(os.path.sep)[-1].replace('.slay', '').replace('_',':').replace('colon', ':')) for file in savegames ]
@@ -184,8 +184,9 @@ def load_config():
             config['savegame'] = init_save_obj()
 
     else:     
-        print('No savefiles found in: ', confighome)
-        config['savegame'] = init_save_obj()
+        print('No savefiles found in: ', confighome) """
+    
+    config['savegame'] = init_save_obj()
 
     return config
     
@@ -196,7 +197,7 @@ def check_update(current_version):
     try:
         print('Checking repository for updates..')
         response = requests.get("https://api.github.com/repos/fischer-hub/vigilant-funicular/releases/latest").json()
-        print(response["name"], current_version)
+        print(f"Latest version is: {response['name']}, current version is: {current_version}")
     except Exception as e:
          print('Failed to check remote version, probs connection issue: ', e)
          return False
