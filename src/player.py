@@ -129,9 +129,9 @@ class Player():
         if self.talk_sound: self.talk_sound.stop()
         self.talk_sound = pg.mixer.Sound(path(audiofile))
         self.talking = True
-        self.moving = False
+        #self.moving = False
         self.rect = self.current_animation.rect
-        self.current_animation = self.animation_lst[2]
+        if not self.moving: self.current_animation = self.animation_lst[2]
         self.current_animation.rect = self.rect
         self.destination_pos = (self.rect[0], self.rect[1])
         self.steps_sound.stop()
