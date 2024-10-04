@@ -19,8 +19,16 @@ class SizeMeter(Clickable):
         self.scene.fg_lst['size_meter'].index = self.idx
         self.scene.config['scale_factor'] = self.idx
         save_config(self.scene.config)
-        print(f"Restarting game {sys.executable, ['python'] + sys.argv} to apply size change..")
-        os.execv(sys.executable, ['python'] + sys.argv)
+
+        # check if game is running as bundled exe or not becaus the restart path will differ here
+        # if we are bundled pyinstaller will extend the sys module with the new frozen attribute so this will return true
+        if getattr(sys, 'frozen', False):
+            os.execv(sys.executable)
+            print(f"Restarting game {sys.executable} to apply size change..")
+
+        else:
+            print(f"Restarting game {sys.executable + ['python'] + sys.argv} to apply size change..")
+            os.execv(sys.executable, ['python'] + sys.argv)
     
 
 class Btn(Clickable):
