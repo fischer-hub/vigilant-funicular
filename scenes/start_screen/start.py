@@ -23,8 +23,8 @@ class SizeMeter(Clickable):
         # check if game is running as bundled exe or not becaus the restart path will differ here
         # if we are bundled pyinstaller will extend the sys module with the new frozen attribute so this will return true
         if getattr(sys, 'frozen', False):
-            os.execv(sys.executable)
             print(f"Restarting game {sys.executable} to apply size change..")
+            os.execv(sys.executable, [' '])
 
         else:
             print(f"Restarting game {sys.executable + ['python'] + sys.argv} to apply size change..")
