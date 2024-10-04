@@ -25,6 +25,7 @@ class SizeMeter(Clickable):
         if getattr(sys, 'frozen', False):
             print(f"Restarting game {sys.executable} to apply size change..")
             os.system(sys.executable)
+            pg.quit()
 
         else:
             print(f"Restarting game {sys.executable + ['python'] + sys.argv} to apply size change..")
