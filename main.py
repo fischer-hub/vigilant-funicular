@@ -59,6 +59,9 @@ def main():
     # init character (Player) objects
     doctor = Player([doctor_idle, doctor_walk, doctor_talk, doctor_crouch, doctor_stretch], step_size = 2, dev = dev, pos = (-100, -100), config = config)
     
+    # this makes sure the inventory is loaded correctly from the savegame before the scenes are initialized, since some items only get rendered in the scene when they are not in the players inventory yet
+    if any("slay" in arg for arg in sys.argv): doctor.load()
+    
     # set background music
     pg.mixer.music.load(util.path('sounds/music/colorful_flowers.mp3'))
     pg.mixer.music.set_volume(0.1)
@@ -128,7 +131,7 @@ def main():
             
         
         # draw rect on screen
-        #pg.draw.rect(screen, (255,255,255), (((1550, 0, 200, 820))))
+        #pg.draw.rect(screen, (255,255,255), (((10, 700, 400, 180))))
         
         cursor.draw(screen)
 

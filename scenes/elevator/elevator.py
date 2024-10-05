@@ -120,3 +120,11 @@ class ElevatorScene(Scene):
                                'plant_top': pflanze_clb_top, 'plant_bottom': pflanze_clb_bottom }
 
         self.sound_lst += [yoyo_snoring]
+        print('inventory', self.player.inventory)
+        if any("Bottle" in item for item in self.player.inventory):
+            self.clickable_lst.pop('bottles')
+            self.bg_lst.pop('bottles')
+        
+        if any("Rohrzange" in item for item in self.player.inventory):
+            self.clickable_lst.pop('rohrzange')
+            self.bg_lst.pop('rohrzange')
