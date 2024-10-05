@@ -17,11 +17,12 @@ class Valve(Clickable):
             self.player.move_to(pg.mouse.get_pos(), self.on_arrive)
         else:
             # we get here when the first pipe animation was played and the timer from the userevent sent us back here to play the second one, this is not a real event cause by the player
-            print('polay pipe 2 anijm')
             self.scene.bg_lst.pop('pipe_flow1')
             self.scene.bg_lst.update({'pipe_flow2': self.animation[1]})
             self.first_animation_played = False
             self.scene.bg_lst.pop('dripping_pipe')
+            self.scene.clickable_lst.pop('dripping_pipe')
+
             return None
 
     def on_arrive(self):
@@ -30,7 +31,7 @@ class Valve(Clickable):
             self.scene.bg_lst.pop('valve')
             self.scene.bg_lst['valve_falling'] = self.animation[0]
             self.scene.bg_lst['valve_falling'].pause = False
-            self.scene.bg_lst['valve_falling'].default_frame = 3
+            self.scene.bg_lst['valve_falling'].default_frame = 4
             self.scene.bg_lst['ladder'].pause = False
             self.scene.bg_lst['ladder'].default_frame = 14
             self.scene.clickable_lst.pop('ladder')
@@ -78,7 +79,7 @@ class Water(Clickable):
         self.player.crouch()
         self.scene.cursor.item = ''
         self.grab_sound.play(maxtime = 1000)
-        self.player.inventory.pop(self.current_item)
+        self.player.inventory.remove(self.current_item)
         self.player.inventory.append(self.current_item.replace('Empty', 'Full'))
 
     def on_click(self):
@@ -125,14 +126,20 @@ class Bathroom(Scene):
         self.clickable_lst = {'right_change_scene': ChangeScene(pg.Rect(1849, 128, 100, 900), 1, hover_cursor = 4), 'valve': valve_clb, 'dripping_pipe': dripping_pipe_clb,
                               'ladder': ladder_clb, 'spider': spider_clb}
 
-        if self.config['savegame']['bathroom']['valve']: 
+        if self.config['savegame']['bathroom']['valve']:
             self.clickable_lst.update({'top_change_scene': ChangeScene(pg.Rect((1550, 0, 200, 820)), 1, hover_cursor = 5)})
             self.clickable_lst.update({'water': water_clb})
             self.bg_lst.update({'pipe_flow2': pipe_flow2})
             self.bg_lst.pop('dripping_pipe')
+            self.clickable_lst.pop('dripping_pipe')
             stream_sound = pg.mixer.Sound(path('sounds', 'water_stream.ogg'))
             stream_sound.set_volume(0.6)
             stream_sound.play()
             self.sound_lst += [stream_sound]
+            self.bg_lst.pop('valve')
+            self.clickable_lst.pop('valve')
+            self.bg_lst.update({'valve_falling': valve_falling})
+            # this seems to have no effect on the displayed frame?
+            self.bg_lst['valve_falling'].default_frame = 4
 
 
