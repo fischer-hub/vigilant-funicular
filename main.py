@@ -17,6 +17,8 @@ import sys
 
 def main():
 
+    print(sys.argv)
+    
     # load config file
     config = util.load_config()
     config['version'] = 'v0.0.1-alpha'

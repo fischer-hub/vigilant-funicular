@@ -97,7 +97,7 @@ class Bathroom(Scene):
 
         self.clickable_lst = {'right_change_scene': ChangeScene(pg.Rect(1849, 128, 100, 900), 1, hover_cursor = 4), 'valve': valve_clb, 'dripping_pipe': dripping_pipe_clb,
                               'ladder': ladder_clb, 'spider': spider_clb}
-        
+
         if self.config['savegame']['bathroom']['valve']: 
             self.clickable_lst.update({'top_change_scene': ChangeScene(pg.Rect((1550, 0, 200, 820)), 1, hover_cursor = 5)})
             self.bg_lst.update({'pipe_flow2': pipe_flow2})

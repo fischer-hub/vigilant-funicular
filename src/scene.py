@@ -1,15 +1,25 @@
 import pygame as pg
 from src.animate import StripAnimate
 from src.text import Text
-import pickle
+import pickle, sys
 from lib.helper import path
 
 
 class SceneHandler():
     def __init__(self, scene_lst, player, overlay):
 
+        print("Initializing scene handler:")
+        if 'log' in sys.argv:
+            self.scene_idx = 2
+        elif any("slay" in arg for arg in sys.argv):
+            self.scene_idx = player.config['savegame']['scene']
+            print(f"Loading scene {self.scene_idx} from savefile.")
+            player.load()
+        else:
+            print("Loading default scene 'start screen'.")
+            self.scene_idx = 3
+
         self.scene_lst = scene_lst
-        self.scene_idx = 3
         self.scene = self.scene_lst[self.scene_idx]
         self.player = player
         self.player.collision_lst = self.scene.collision_lst
@@ -30,7 +40,7 @@ class SceneHandler():
         # we stopped moving to destination, ready for next scnene
         if not self.player.moving or self.scene.dev:
         #if True:
-            print('Changing to scene: ', self.scene_idx, ' spawn: ', self.pos)
+            print('Changing to scene: ', self.scene_idx, ' spawn position: ', self.pos)
             [sound.stop() for sound in self.scene.sound_lst]
             self.scene = self.scene_lst[self.scene_idx]
             self.player.rect[0] = self.pos[0]
@@ -73,7 +83,7 @@ class SceneHandler():
                    # p2.append(mpos[1])
 
         if event_response is not None and event_response != 42:
-            print(event_response)
+            print(f"Got event response: {event_response}")
             self.change_scene(event_response)
     
     def draw_bg(self, surface):
@@ -198,7 +208,7 @@ class Scene():
 
             self.player.current_animation.rect = self.player.rect
             self.player.talking = False
-            print('talking ends')
+            print('Talking ended.')
         
         elif event.type == pg.USEREVENT + 4:
             # trigger start of talking animation after crouching
@@ -234,7 +244,7 @@ class ChangeScene(Clickable):
         self.pos = pos
 
     def on_click(self):
-        print('change scene triggered')
+        print('Triggered scenen change.')
         return [self.next_scene_idx, self.pos]
     
 

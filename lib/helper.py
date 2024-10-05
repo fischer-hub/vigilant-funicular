@@ -123,7 +123,8 @@ def save_config(config):
 
 def init_save_obj():
      savegame = {'scene1': {'red': False},
-                 'bathroom': {'valve': False}}
+                 'bathroom': {'valve': False},
+                 'inventory': []}
      print('Initializing savegame object.')
      return savegame
 
@@ -142,9 +143,9 @@ def load_config():
 
     #with open(os.path.join(confighome, 'log_err.txt'), 'w') as sys.stderr:
     #    print('Redirecting stderr to: ')#, os.path.join(confighome, 'log.txt'))
-    if len(sys.argv) > 1 and not 'log' in sys.argv:
-        sys.stderr = open(os.path.join(confighome, 'log_err.txt'), 'w')
-        sys.stdout = open(os.path.join(confighome, 'log_out.txt'), 'w')
+    #if len(sys.argv) > 1 and not 'log' in sys.argv:
+    #    sys.stderr = open(os.path.join(confighome, 'log_err.txt'), 'w')
+    #    sys.stdout = open(os.path.join(confighome, 'log_out.txt'), 'w')
 
     if os.path.isfile(configfile):
         with open(configfile, 'r') as file:
@@ -186,11 +187,14 @@ def load_config():
     else:     
         print('No savefiles found in: ', confighome) """
     
-    config['savegame'] = init_save_obj()
+    if any("slay" in arg for arg in sys.argv):
+        config['savegame'] = merge_dicts(load_savegame([x for x in sys.argv if 'slay' in x][0]), init_save_obj())
+    else:
+        # new game case
+        config['savegame'] = init_save_obj()
 
     return config
     
-
 
 def check_update(current_version):
     '''Returns true when the latest remote version is different from the current one. Else returns false, also returns false when remote is not reachable.'''
@@ -202,4 +206,17 @@ def check_update(current_version):
          print('Failed to check remote version, probs connection issue: ', e)
          return False
     return response["name"] != current_version
-         
+
+
+def merge_dicts(a: dict, b: dict, path=[], level=1):
+    print(f"Merging savegame template with loaded savegame on recursion level {level}:")
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge_dicts(a[key], b[key], path + [str(key)], level=level+1)
+            elif a[key] != b[key]:
+                print(f"Key '{key}' exists in both savegames but has different values. Keeping value of loaded savegame: '{a[key]}', template savegame '{b[key]}'")
+        else:
+            print(f"Savegame key '{key}' not found in loaded savegame, defaulting to template value {b[key]}.")
+            a[key] = b[key]
+    return a

@@ -90,7 +90,7 @@ class ElevatorScene(Scene):
         rohrzange = StripAnimate('scenes/elevator/rohrzange.png', img_width = 32, frame_rate = 1, scale_factor = scale_factor, pos = (1081 * ((self.scale_factor) / 6), 687 * ((self.scale_factor) / 6)))
         pflanze = StripAnimate('scenes/elevator/elevator_tree.png', img_width = 320, frame_rate = 5, scale_factor = scale_factor, cycles = 1, pause = True)
 
-        #clickables
+        # clickables
         elevator_door_clickable = ElevatorDoor(pg.Rect(((1180, 420, 50, 55))), self, sound_lst = [path('sounds', 'characters', 'dr', 'fahrstuhl_ausser_betrieb.ogg')])
         bottles_clickable = Bottles(pg.Rect(((981, 687, 20 * self.scale_factor, 20 * self.scale_factor))), self.player, scene = self, sound_lst = [path('sounds', 'characters', 'dr', 'grab.ogg'), path('sounds', 'characters', 'dr', 'eine_leere_bierflasche.ogg')], animation = bottles)
         yoyo_sleeping_clickable = YoyoSleeping(pg.Rect(1292, 540, 150, 250), self.player, sound_lst = path('sounds', 'characters', 'dr', 'der_handwerker_schlaeft_gerade.ogg'))

@@ -1,9 +1,9 @@
 import pygame as pg
 from src.scene import Scene, Clickable, Btn
-from lib.helper import path, get_savegames, load_savegame
+from lib.helper import path, get_savegames, load_savegame, merge_dicts
 from src.animate import StripAnimate
 from src.text import Text
-import yaml
+import os, sys
 
 
 class InventorySlot(Clickable):
@@ -18,13 +18,18 @@ class InventorySlot(Clickable):
 
     def on_click(self):
         if len(self.scene.savegame_lst) >= self.inventory_idx:
-            self.player.config['savegame'] = load_savegame(self.scene.savegame_lst[self.inventory_idx])
-            print('loaded savefile: ', self.player.config['savegame']['savefile'])
-            self.player.load()
-            return (self.player.config['savegame']['scene'], self.player.destination_pos)
-            
+
+            if getattr(sys, 'frozen', False):
+                print(f"Restarting game in frozen mode {sys.executable + self.scene.savegame_lst[self.inventory_idx]} to apply savegame change..")
+                pg.quit()
+                os.system(sys.executable + ' ' + self.scene.savegame_lst[self.inventory_idx])
+                sys.exit()
+
+            else:
+                print(f"Restarting game in script mode {sys.executable + 'python' + sys.argv[0] + self.scene.savegame_lst[self.inventory_idx]} to apply savegame change..")
+                os.execv(sys.executable, ['python'] + sys.argv + [self.scene.savegame_lst[self.inventory_idx]])            
         else:
-            print('There is no savegame in this slot you brat')
+            print('There is no savegame in this slot you brat.')
 
 
 
