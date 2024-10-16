@@ -10,7 +10,7 @@ on:
       release_version:
         description: 'Release version (e.g., v1.0.0)'
         required: true
-        default: 'v0.0.2-alpha'
+        default: 'v0.0.3-alpha'
 
 jobs:
   build:
