@@ -40,19 +40,19 @@ jobs:
     - name: Rename executable for Windows
       if: runner.os == 'Windows'
       run: |
-        Rename-Item -Path dist/vigilant.exe -NewName vigilant-${{ matrix.os }}-${{ github.sha }}.exe
+        Rename-Item -Path dist/vigilant.exe -NewName vigilant-${{ matrix.os }}.exe
 
     - name: Rename executable for macOS and Linux
       if: runner.os != 'Windows'
       run: |
         chmod +x dist/vigilant
-        mv dist/vigilant dist/vigilant-${{ matrix.os }}-${{ github.sha }}
+        mv dist/vigilant dist/vigilant-${{ matrix.os }}
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: executable-${{ matrix.os }}
-        path: dist/vigilant-${{ matrix.os }}-${{ github.sha }}*
+        path: dist/vigilant-${{ matrix.os }}*
 
   release:
     needs: build
