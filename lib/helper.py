@@ -2,7 +2,8 @@ import math, os, sys, yaml, datetime, urllib.request, platform
 from scipy.interpolate import CubicSpline
 import pickle
 import numpy as np
-import requests
+import requests, shutil
+import pygame as pg
 
 
 dev = False
@@ -227,15 +228,37 @@ def update_game():
 
     if 'Linux' in osname:
         osname = 'ubuntu'
+        executablename = 'vigilant'
     elif 'Darwin' in osname:
+        executablename = 'vigilant'
         osname = 'macos'
     elif 'Windows' in osname:
         osname = 'windows'
+        executablename = 'vigilant.exe'
     else:
         print(f"Failed to update game executable. Could not detect operating system since platform.system returns unknown value: {osname}.")
         return
     
     try:
-        urllib.request.urlretrieve(f"https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}-latest", "vigilant")
+        urllib.request.urlretrieve(f"https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}-latest", "vigilant_update")
     except Exception as e:
         print(f"Failed to update game executable, download returned: {e}\nFrom url: https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}-latest")
+        return
+    
+    if os.path.isfile(executablename):
+        os.remove(executablename)
+        shutil.move('vigilant_update', executablename)
+    else:
+        print(f"Could not remove old executable file because it does not exist: {executablename}.")
+        return
+
+    if getattr(sys, 'frozen', False):
+                print(f"Restarting game in frozen mode to apply executable update..")
+                pg.quit()
+                os.system(sys.executable)
+                sys.exit()
+
+    else:
+        print(f"Updating of the executable is only supported for the bundled version. You see to run the  script version. Please pull the update from the repository.")
+        # maybe put this as a warn message on screen
+        #os.execv(sys.executable, ['python'] + sys.argv + [self.scene.savegame_lst[self.inventory_idx]])            
