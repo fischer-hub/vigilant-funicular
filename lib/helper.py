@@ -1,4 +1,4 @@
-import math, os, sys, yaml, datetime
+import math, os, sys, yaml, datetime, urllib.request, platform
 from scipy.interpolate import CubicSpline
 import pickle
 import numpy as np
@@ -220,3 +220,22 @@ def merge_dicts(a: dict, b: dict, path=[], level=1):
             print(f"Savegame key '{key}' not found in loaded savegame, defaulting to template value {b[key]}.")
             a[key] = b[key]
     return a
+
+
+def update_game():
+    osname = platform.system()
+
+    if 'Linux' in osname:
+        osname = 'ubuntu'
+    elif 'Darwin' in osname:
+        osname = 'macos'
+    elif 'Windows' in osname:
+        osname = 'windows'
+    else:
+        print(f"Failed to update game executable. Could not detect operating system since platform.system returns unknown value: {osname}.")
+        return
+    
+    try:
+        urllib.request.urlretrieve(f"https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}", "vigilant")
+    except Exception as e:
+        print(f"Failed to update game executable, download returned: {e}.")

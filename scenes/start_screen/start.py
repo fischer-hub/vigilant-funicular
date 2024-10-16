@@ -1,7 +1,7 @@
 from src.scene import Scene, Clickable, ChangeScene, Commentable
 from src.text import Text
 import pygame as pg
-from lib.helper import path, save_config, check_update
+from lib.helper import path, save_config, check_update, update_game
 from src.animate import StripAnimate
 from datetime import datetime
 import os, sys
@@ -94,7 +94,7 @@ class StartScreen(Scene):
             save_config(self.config)        
 
         if 'update_available' not in self.config:
-            self.config['update_available'] = False    
+            self.config['update_available'] = False
 
         self.player_spawn = (-100, -100)
         
@@ -112,7 +112,7 @@ class StartScreen(Scene):
         # clickables
         start_button_clickable = Btn(pg.Rect(460, 120, 1050, 220), sound = path('sounds', 'button_click.ogg'), animation = start_button, scene = self, id = 'start_button', fct = lambda: (4,(0,0)))
         new_game_button_clickable = Btn(pg.Rect((460, 440, 1050, 220)), sound = path('sounds', 'button_click.ogg'), animation = new_game, fct = lambda: (0,(0,0)), scene = self, id = 'new_game')
-        update_button_clickable = Btn(pg.Rect((460, 770, 1050, 220)), sound = path('sounds', 'button_click.ogg'), animation = update_button, scene = self, id = 'update_button')
+        update_button_clickable = Btn(pg.Rect((460, 770, 1050, 220)), sound = path('sounds', 'button_click.ogg'), animation = update_button, scene = self, id = 'update_button', fct = update_game)
         caution_msg_clickable = Msg(pg.Rect((524, 708, 800, 150)), sound = path('sounds', 'button_click.ogg'), animation = caution_msg, scene = self)
 
         self.clickable_lst = { '1': SizeMeter(pg.Rect(1670, 290, 90, 65), self, 1), '2': SizeMeter(pg.Rect(1670, 395, 90, 65), self, 2), '3': SizeMeter(pg.Rect(1670, 495, 90, 65), self, 3),
