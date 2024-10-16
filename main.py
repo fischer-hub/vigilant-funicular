@@ -21,7 +21,7 @@ def main():
     
     # load config file
     config = util.load_config()
-    config['version'] = 'v0.0.1-alpha'
+    config['version'] = 'v0.0.2-alpha'
 
     # I think this doesnt even work..    
     if 'dev' in sys.argv:
