@@ -236,6 +236,6 @@ def update_game():
         return
     
     try:
-        urllib.request.urlretrieve(f"https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}", "vigilant")
+        urllib.request.urlretrieve(f"https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}-latest", "vigilant")
     except Exception as e:
-        print(f"Failed to update game executable, download returned: {e}.")
+        print(f"Failed to update game executable, download returned: {e}\nFrom url: https://github.com/fischer-hub/vigilant-funicular/releases/latest/download/vigilant-{osname}-latest")
